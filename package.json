@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "dayjs": "~1.8.17",
-    "hapi-request-utilities": "~2.2.0"
+    "hapi-request-utilities": "~2.2.0",
+    "jws": "~3.2.2"
   },
   "devDependencies": {
     "@hapi/code": "~7.0.0",
