@@ -12,15 +12,14 @@ class JWTProvider extends BaseProvider {
      * @returns {String}
      */
   async encode (payload) {
-    const signer = JWS
-      .createSign({
-        header: {
-          alg: this.getAlgo(),
-          typ: typeof payload === 'object' ? 'JWT' : undefined
-        },
-        payload,
-        privateKey: await this.getSigningKey()
-      })
+    const signer = JWS.createSign({
+      header: {
+        alg: this.getAlgo(),
+        typ: typeof payload === 'object' ? 'JWT' : undefined
+      },
+      payload,
+      privateKey: await this.getSigningKey()
+    })
 
     return new Promise((resolve, reject) => {
       signer
