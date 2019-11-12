@@ -4,7 +4,7 @@ class Payload {
   /**
    * Create an instance based on the given `payload` object.
    *
-   * @param {ClaimCollection} claims
+   * @param {Map} claims
    */
   constructor (claims) {
     this.claims = claims
@@ -25,7 +25,13 @@ class Payload {
    * @returns {Object}
    */
   get () {
-    return Object.fromEntries(this.claims)
+    const result = {}
+
+    this.claims.forEach((value, key) => {
+      result[key] = value
+    })
+
+    return result
   }
 
   /**
