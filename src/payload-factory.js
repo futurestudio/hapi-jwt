@@ -63,6 +63,11 @@ class PayloadFactory {
     return this.buildClaimsMap().createPayload()
   }
 
+  /**
+   * Create the default claims and add them to the claims map.
+   *
+   * @returns {PayloadFactory}
+   */
   buildClaimsMap () {
     this.defaultClaims.forEach(claim => {
       this.addClaim(claim, this.claimFactory.make(claim))
