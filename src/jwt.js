@@ -25,18 +25,50 @@ class JWT {
     return this.provider.encode(payload.get())
   }
 
-  async verify () {
-    // TODO
+  /**
+   * Check and verify that the token is valid.
+   *
+   * @returns {Payload}
+   */
+  async check () {
+    //  TODO
   }
 
-  async invalidate (token) {
+  /**
+   * Invalidate the `token` by adding it to a blacklist.
+   *
+   * @returns {JWT}
+   */
+  async invalidate () {
     // TODO
+
+    return this
   }
 
+  /**
+   * Set the JWT and wrap it in a `Token` instance.
+   *
+   * @param {String} token
+   *
+   * @returns {JWT}
+   */
   setToken (token) {
     this.token = token instanceof Token ? token : new Token(token)
 
     return this
+  }
+
+  /**
+   * Returns the token.
+   *
+   * @returns {Token}
+   */
+  getToken () {
+    if (!this.token) {
+      // TODO parse token
+    }
+
+    return this.token
   }
 
   /**
