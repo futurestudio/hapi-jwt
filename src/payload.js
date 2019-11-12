@@ -4,10 +4,10 @@ class Payload {
   /**
    * Create an instance based on the given `payload` object.
    *
-   * @param {Map} claims
+   * @param {ClaimSet} claimSet
    */
-  constructor (claims) {
-    this.claims = claims
+  constructor (claimSet) {
+    this.claimSet = claimSet
   }
 
   /**
@@ -16,7 +16,7 @@ class Payload {
    * @returns {Map}
    */
   getClaims () {
-    return this.claims
+    return this.claimSet
   }
 
   /**
@@ -25,13 +25,7 @@ class Payload {
    * @returns {Object}
    */
   get () {
-    const result = {}
-
-    this.claims.forEach((value, key) => {
-      result[key] = value
-    })
-
-    return result
+    return this.claimSet.toObject()
   }
 
   /**
@@ -51,7 +45,7 @@ class Payload {
    * @returns {Boolean}
    */
   has (name) {
-    return this.claims.has(name)
+    return this.claimSet.has(name)
   }
 }
 

@@ -1,11 +1,12 @@
 'use strict'
 
 const Payload = require('./payload')
+const ClaimSet = require('./claims/set')
 const ClaimFactory = require('./claims/factory')
 
 class PayloadFactory {
   constructor ({ request, options }) {
-    this.claims = new Map()
+    this.claimSet = new ClaimSet()
     this.claimFactory = new ClaimFactory({ request, options })
   }
 
@@ -33,7 +34,7 @@ class PayloadFactory {
    * @returns {PayloadFactory}
    */
   addClaim (name, value) {
-    this.claims.set(name, value)
+    this.claimSet.add(name, value)
 
     return this
   }
@@ -82,7 +83,7 @@ class PayloadFactory {
    * @returns {Payload}
    */
   createPayload () {
-    return new Payload(this.claims)
+    return new Payload(this.claimSet)
   }
 }
 
