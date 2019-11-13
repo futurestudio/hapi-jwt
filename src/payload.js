@@ -47,6 +47,17 @@ class Payload {
   has (name) {
     return this.claimSet.has(name)
   }
+
+  /**
+   * Determines whether the payload is missing a claim with the given `name`.
+   *
+   * @param {String} name
+   *
+   * @returns {Boolean}
+   */
+  missing (name) {
+    return !this.claimSet.has(name)
+  }
 }
 
 module.exports = Payload
