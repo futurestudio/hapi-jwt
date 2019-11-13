@@ -7,8 +7,13 @@ async function register (server, options) {
     plugin: require('hapi-request-utilities')
   })
 
+  if (options.blacklistEnabled) {
+    // ensure cache
+    // should this go somewhere else?
+  }
+
   server.decorate('request', 'jwt', (request) => {
-    return new JWT({ request, options })
+    return new JWT({ request, options, server })
   }, { apply: true })
 }
 

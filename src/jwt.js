@@ -5,7 +5,8 @@ const Provider = require('./providers/jws')
 const PayloadFactory = require('./payload-factory')
 
 class JWT {
-  constructor ({ options, request }) {
+  constructor ({ options, request, server }) {
+    this.server = server
     this.token = undefined
     this.options = options
     this.request = request

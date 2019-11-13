@@ -12,6 +12,8 @@
     "jws": "~3.2.2"
   },
   "devDependencies": {
+    "@hapi/catbox": "~10.2.3",
+    "@hapi/catbox-redis": "~5.0.5",
     "@hapi/code": "~7.0.0",
     "@hapi/hapi": "~18.4.0",
     "@hapi/lab": "~21.0.0",
