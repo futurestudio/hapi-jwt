@@ -30,7 +30,7 @@ describe('JWT', () => {
       handler: async request => {
         const user = { id: 1, name: 'Marcus' }
 
-        return request.jwt.from(user)
+        return request.jwt.for(user)
       }
     })
 

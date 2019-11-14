@@ -21,7 +21,7 @@ class JWT {
    *
    * @returns {String}
    */
-  async from (user) {
+  async for (user) {
     const payload = this.createPayload(user)
 
     return this.provider.encode(payload.get())
