@@ -9,10 +9,11 @@ const { describe, it } = exports.lab = Lab.script()
 
 async function prepareServer () {
   const server = new Hapi.Server()
+  await server.initialize()
+
   await server.register({
     plugin: HapiJWT,
     options: {
-      algo: 'HS256',
       secret: '123456789-123456789-123456789-123456789'
     }
   })
