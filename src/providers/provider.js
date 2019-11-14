@@ -4,11 +4,11 @@ const Fs = require('fs')
 
 class Provider {
   constructor ({ options }) {
-    const { secret, algo, keys } = options
+    const { secret, algorithm, keys } = options
 
-    this.algo = algo
     this.keys = keys
     this.secret = secret
+    this.algorithm = algorithm
   }
 
   /**
@@ -16,10 +16,10 @@ class Provider {
    *
    * @returns {Array}
    */
-  get supportedAlgos () {
+  get supportedAlgorithms () {
     return []
-      .concat(this.symmetricAlgos)
-      .concat(this.asymmetricAlgos)
+      .concat(this.symmetricAlgorithms)
+      .concat(this.asymmetricAlgorithms)
   }
 
   /**
@@ -27,7 +27,7 @@ class Provider {
    *
    * @returns {Array}
    */
-  get symmetricAlgos () {
+  get symmetricAlgorithms () {
     return [
       'HS256', 'HS384', 'HS512'
     ]
@@ -38,7 +38,7 @@ class Provider {
    *
    * @returns {Array}
    */
-  get asymmetricAlgos () {
+  get asymmetricAlgorithms () {
     return [
       'RS256', 'RS384', 'RS512',
       'ES256', 'ES384', 'ES512',
@@ -51,8 +51,8 @@ class Provider {
    *
    * @returns {String}
    */
-  getAlgo () {
-    return this.algo
+  getAlgorithm () {
+    return this.algorithm
   }
 
   /**
@@ -61,7 +61,7 @@ class Provider {
    * @returns {Boolean}
    */
   isAsymmetric () {
-    return this.asymmetricAlgos.includes(this.algo)
+    return this.asymmetricAlgorithms.includes(this.algorithm)
   }
 
   /**
@@ -73,7 +73,7 @@ class Provider {
    */
   async getSigningKey () {
     return this.isAsymmetric()
-      ? this.privateKey()
+      ? this.getPrivateKey()
       : this.getSecret()
   }
 
@@ -86,7 +86,7 @@ class Provider {
    */
   async getVerificationKey () {
     return this.isAsymmetric()
-      ? this.publicKey()
+      ? this.getPublicKey()
       : this.getSecret()
   }
 
@@ -104,7 +104,7 @@ class Provider {
    *
    * @returns {String}
    */
-  async privateKey () {
+  async getPrivateKey () {
     return this.readFile(this.keys.private)
   }
 
@@ -113,7 +113,7 @@ class Provider {
    *
    * @returns {String}
    */
-  async publicKey () {
+  async getPublicKey () {
     return this.readFile(this.keys.public)
   }
 

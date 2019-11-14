@@ -14,7 +14,7 @@ class JWTProvider extends BaseProvider {
   async encode (payload) {
     const signer = JWS.createSign({
       header: {
-        alg: this.getAlgo(),
+        alg: this.getAlgorithm(),
         typ: typeof payload === 'object' ? 'JWT' : undefined
       },
       payload,
@@ -38,7 +38,7 @@ class JWTProvider extends BaseProvider {
   async decode (token) {
     const verifier = JWS.createVerify({
       signature: token,
-      algorithm: this.getAlgo(),
+      algorithm: this.getAlgorithm(),
       publicKey: await this.getVerificationKey()
     })
 
