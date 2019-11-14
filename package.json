@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "dayjs": "~1.8.17",
+    "deepmerge": "~4.2.2",
     "hapi-request-utilities": "~2.2.0",
     "jws": "~3.2.2"
   },

@@ -1,6 +1,7 @@
 'use strict'
 
 const JWT = require('./jwt')
+const Merge = require('deepmerge')
 const DefaultConfig = require('../config/default')
 
 async function register (server, config) {
@@ -8,7 +9,7 @@ async function register (server, config) {
     plugin: require('hapi-request-utilities')
   })
 
-  const options = Object.assign({}, DefaultConfig, config)
+  const options = Merge.all([{}, DefaultConfig, config])
   const cache = await createCache(server, options)
 
   server.decorate('request', 'jwt', (request) => {
