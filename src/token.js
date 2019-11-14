@@ -3,8 +3,10 @@
 class Token {
   /**
    * Create a token instance based on the given `value`.
+   * The parameter of the constructure should be the
+   * signed JWT in string format.
    *
-   * @param {String} value
+   * @param {String} value - the signed JWT
    */
   constructor (value) {
     this.value = value
