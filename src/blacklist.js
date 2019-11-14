@@ -1,5 +1,7 @@
 'use strict'
 
+const TimeUtils = require('./utils/time')
+
 class Blacklist {
   constructor ({ storage }) {
     this.storage = storage
@@ -29,10 +31,22 @@ class Blacklist {
       return
     }
 
-    const value = 'blacklisted'
-    const ttl = 1234 // calculate ttl
+    await this.storage.set(
+      this.tokenIdentifier(payload),
+      'blacklisted',
+      this.getMillisecondsUntilExpired(payload)
+    )
+  }
 
-    await this.storage.set(this.getTokenIdentifier(), value, ttl)
+  /**
+   * Returns the number of milliseoncds until token expiry.
+   *
+   * @param {Payload} payload
+   *
+   * @returns {Number}
+   */
+  getMillisecondsUntilExpired (payload) {
+    return TimeUtils.from(payload.exp).getInMilliseconds()
   }
 
   /**
@@ -41,7 +55,11 @@ class Blacklist {
    * @param {Payload} payload
    */
   async forever (payload) {
-
+    await this.storage.set(
+      this.tokenIdentifier(payload),
+      'forever',
+      TimeUtils.now().addYears(10).getInMilliseconds()
+    )
   }
 
   /**
@@ -52,7 +70,11 @@ class Blacklist {
    * @returns {Boolean}
    */
   async has (payload) {
-    //
+    const value = await this.storage.get(this.tokenIdentifier(payload))
+
+    return value === 'forever'
+      ? true
+      : !!value
   }
 
   /**
@@ -60,8 +82,8 @@ class Blacklist {
    *
    * @param {Payload} payload
    */
-  async remove () {
-
+  async remove (payload) {
+    await this.storage.drop(this.tokenIdentifier(payload))
   }
 
   /**
@@ -71,7 +93,7 @@ class Blacklist {
    *
    * @returns {Boolean}
    */
-  getTokenIdentifier (payload) {
+  tokenIdentifier (payload) {
     return payload[this.identifier]
   }
 }
