@@ -3,8 +3,9 @@
 const TimeUtils = require('./utils/time')
 
 class Blacklist {
-  constructor ({ cache }) {
+  constructor ({ cache, options }) {
     this.cache = cache
+    this.options = options.blacklist
   }
 
   /**
@@ -14,6 +15,24 @@ class Blacklist {
    */
   get identifier () {
     return 'jti'
+  }
+
+  /**
+   * Determine whether the blacklist is enabled.
+   *
+   * @returns {Boolean}
+   */
+  isEnabled () {
+    return this.options.enabled
+  }
+
+  /**
+   * Determine whether the blacklist is disabled.
+   *
+   * @returns {Boolean}
+   */
+  isDisabled () {
+    return !this.isEnabled()
   }
 
   /**
