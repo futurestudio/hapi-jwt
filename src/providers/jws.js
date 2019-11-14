@@ -46,11 +46,11 @@ class JWTProvider extends BaseProvider {
       verifier
         .on('error', error => reject(error))
         .on('done', (valid, decoded) => {
-          if (!valid) {
-            throw new Error('Invalid token')
+          if (valid) {
+            return resolve(decoded.payload)
           }
 
-          resolve(decoded.payload)
+          throw new Error('Invalid token')
         })
     })
   }
