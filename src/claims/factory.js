@@ -5,6 +5,9 @@ const TimeUtils = require('../utils/time')
 
 class ClaimFactory {
   constructor ({ request, options }) {
+    const { ttl } = options
+
+    this.ttl = ttl
     this.request = request
   }
 
@@ -79,7 +82,7 @@ class ClaimFactory {
    * @returns {Number}
    */
   exp () {
-    return TimeUtils.now().addMinutes(15).getInSeconds()
+    return TimeUtils.now().addMinutes(this.ttl).getInSeconds()
   }
 }
 
