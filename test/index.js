@@ -14,7 +14,11 @@ async function prepareServer () {
   await server.register({
     plugin: HapiJWT,
     options: {
-      secret: '123456789-123456789-123456789-123456789'
+      secret: '123456789-123456789-123456789-123456789',
+
+      blacklist: {
+        enabled: false
+      }
     }
   })
 
