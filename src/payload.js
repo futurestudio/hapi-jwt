@@ -11,6 +11,17 @@ class Payload {
   }
 
   /**
+   * Returns the claim identified by `name`.
+   *
+   * @param {String} name
+   *
+   * @returns {*}
+   */
+  getClaim (name) {
+    return this.claimSet.get(name)
+  }
+
+  /**
    * Returns the claims map.
    *
    * @returns {Map}
