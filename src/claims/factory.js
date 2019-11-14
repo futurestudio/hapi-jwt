@@ -1,10 +1,7 @@
 'use strict'
 
-const Dayjs = require('dayjs')
 const Crypto = require('crypto')
-const UTC = require('dayjs/plugin/utc')
-
-Dayjs.extend(UTC)
+const TimeUtils = require('../utils/time')
 
 class ClaimFactory {
   constructor ({ request, options }) {
@@ -64,7 +61,7 @@ class ClaimFactory {
    * @returns {Number}
    */
   iat () {
-    return this.now().unix()
+    return TimeUtils.now().getInSeconds()
   }
 
   /**
@@ -73,7 +70,7 @@ class ClaimFactory {
    * @returns {Date}
    */
   nbf () {
-    return this.now().unix()
+    return TimeUtils.now().getInSeconds()
   }
 
   /**
@@ -82,16 +79,7 @@ class ClaimFactory {
    * @returns {Number}
    */
   exp () {
-    return this.now().add(15, 'minute').unix()
-  }
-
-  /**
-   * Returns the current time.
-   *
-   * @returns {Dayjs}
-   */
-  now () {
-    return Dayjs().utc()
+    return TimeUtils.now().addMinutes(15).getInSeconds()
   }
 }
 
