@@ -1,16 +1,17 @@
 'use strict'
 
 const Token = require('./token')
+const Blacklist = require('./blacklist')
 const Provider = require('./providers/jws')
 const PayloadFactory = require('./payload-factory')
 
 class JWT {
-  constructor ({ options, request, server }) {
-    this.server = server
+  constructor ({ request, cache, options }) {
     this.token = undefined
     this.options = options
     this.request = request
     this.provider = new Provider({ options })
+    this.blacklist = new Blacklist({ cache })
   }
 
   /**
