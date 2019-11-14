@@ -1,7 +1,6 @@
 'use strict'
 
 const Token = require('./token')
-const Payload = require('./payload')
 const Blacklist = require('./blacklist')
 const Provider = require('./providers/jws')
 const PayloadFactory = require('./payload-factory')
@@ -22,9 +21,9 @@ class JWT {
    * @returns {String}
    */
   async for (user) {
-    const payload = this.createPayload(user)
-
-    return this.provider.encode(payload.get())
+    return this.provider.encode(
+      this.createPayload(user).get()
+    )
   }
 
   /**
@@ -33,9 +32,9 @@ class JWT {
    * @returns {Payload}
    */
   async check () {
-    return new Payload(
-      await this.provider.decode(this.token())
-    )
+    return this.factory().addCustomClaims(
+      await this.provider.decode(this.token().get())
+    ).make()
   }
 
   /**

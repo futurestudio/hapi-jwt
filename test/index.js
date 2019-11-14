@@ -43,4 +43,51 @@ describe('JWT', () => {
 
     expect(token).to.exist()
   })
+
+  it('decdes a JWT', async () => {
+    const user = { id: 1212, name: 'Marcus' }
+
+    const server = await prepareServer()
+    server.route([
+      {
+        method: 'GET',
+        path: '/token',
+        handler: async request => {
+          return request.jwt.for(user)
+        }
+      },
+      {
+        method: 'GET',
+        path: '/decode',
+        handler: async request => {
+          const payload = await request.jwt.check()
+
+          return payload.get()
+        }
+      }
+    ])
+
+    const getTokenRequest = {
+      method: 'GET',
+      url: '/token'
+    }
+
+    const { result: token } = await server.inject(getTokenRequest)
+
+    const decodeRequest = {
+      method: 'GET',
+      url: '/decode',
+      headers: {
+        authorization: `Bearer ${token}`
+      }
+    }
+
+    const { result } = await server.inject(decodeRequest)
+    expect(result.sub).to.equal(user.id)
+    expect(result.exp).to.exist()
+    expect(result.iat).to.exist()
+    expect(result.nbf).to.exist()
+    expect(result.iss).to.exist()
+    expect(result.jti).to.exist().and.length(32)
+  })
 })
