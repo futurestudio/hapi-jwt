@@ -1,17 +1,17 @@
 'use strict'
 
 const Token = require('./token')
+const Payload = require('./payload')
 const Blacklist = require('./blacklist')
 const Provider = require('./providers/jws')
 const PayloadFactory = require('./payload-factory')
 
 class JWT {
   constructor ({ request, cache, options }) {
-    this.token = undefined
     this.options = options
     this.request = request
     this.provider = new Provider({ options })
-    this.blacklist = new Blacklist({ cache })
+    this.blacklist = new Blacklist({ cache, options })
   }
 
   /**
@@ -33,7 +33,9 @@ class JWT {
    * @returns {Payload}
    */
   async check () {
-    //  TODO
+    return new Payload(
+      await this.provider.decode(this.token())
+    )
   }
 
   /**
@@ -41,36 +43,23 @@ class JWT {
    *
    * @returns {JWT}
    */
-  async invalidate () {
-    // TODO
+  async invalidate (forever = false) {
+    if (this.blacklist.isDisabled()) {
+      throw new Error('You must enable the blacklist to invalidate a token')
+    }
 
-    return this
+    return forever
+      ? this.blacklist.forever(this.check())
+      : this.blacklist.add(this.check())
   }
 
   /**
-   * Set the JWT and wrap it in a `Token` instance.
-   *
-   * @param {String} token
-   *
-   * @returns {JWT}
-   */
-  setToken (token) {
-    this.token = token instanceof Token ? token : new Token(token)
-
-    return this
-  }
-
-  /**
-   * Returns the token.
+   * Returns a token instance wrapping the signed JWT.
    *
    * @returns {Token}
    */
-  getToken () {
-    if (!this.token) {
-      // TODO parse token
-    }
-
-    return this.token
+  token () {
+    return new Token(this.request.bearerToken())
   }
 
   /**
