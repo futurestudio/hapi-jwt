@@ -3,8 +3,8 @@
 const TimeUtils = require('./utils/time')
 
 class Blacklist {
-  constructor ({ storage }) {
-    this.storage = storage
+  constructor ({ cache }) {
+    this.cache = cache
   }
 
   /**
@@ -31,7 +31,7 @@ class Blacklist {
       return
     }
 
-    await this.storage.set(
+    await this.cache.set(
       this.tokenIdentifier(payload),
       'blacklisted',
       this.getMillisecondsUntilExpired(payload)
@@ -55,7 +55,7 @@ class Blacklist {
    * @param {Payload} payload
    */
   async forever (payload) {
-    await this.storage.set(
+    await this.cache.set(
       this.tokenIdentifier(payload),
       'forever',
       TimeUtils.now().addYears(10).getInMilliseconds()
@@ -70,7 +70,7 @@ class Blacklist {
    * @returns {Boolean}
    */
   async has (payload) {
-    const value = await this.storage.get(this.tokenIdentifier(payload))
+    const value = await this.cache.get(this.tokenIdentifier(payload))
 
     return value === 'forever'
       ? true
@@ -83,7 +83,7 @@ class Blacklist {
    * @param {Payload} payload
    */
   async remove (payload) {
-    await this.storage.drop(this.tokenIdentifier(payload))
+    await this.cache.drop(this.tokenIdentifier(payload))
   }
 
   /**
