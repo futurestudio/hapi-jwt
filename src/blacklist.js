@@ -65,7 +65,12 @@ class Blacklist {
    * @returns {Number}
    */
   getMillisecondsUntilExpired (payload) {
-    return TimeUtils.from(payload.exp).getInMilliseconds()
+    const now = TimeUtils.now().getInMilliseconds()
+    const exp = TimeUtils.from(payload.getClaim('exp')).getInMilliseconds()
+
+    // TODO exp time is not correct yet
+
+    return exp - now
   }
 
   /**
@@ -113,7 +118,7 @@ class Blacklist {
    * @returns {Boolean}
    */
   tokenIdentifier (payload) {
-    return payload[this.identifier]
+    return payload.getClaim(this.identifier)
   }
 }
 

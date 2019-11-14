@@ -32,9 +32,15 @@ class JWT {
    * @returns {Payload}
    */
   async check () {
-    return this.factory().addCustomClaims(
+    const payload = this.payloadFactory().addCustomClaims(
       await this.provider.decode(this.token().get())
     ).make()
+
+    if (this.blacklist.isEnabled() && await this.blacklist.has(payload)) {
+      throw new Error('Token is blacklisted')
+    }
+
+    return payload
   }
 
   /**
@@ -47,9 +53,11 @@ class JWT {
       throw new Error('You must enable the blacklist to invalidate a token')
     }
 
+    const payload = await this.check()
+
     return forever
-      ? this.blacklist.forever(this.check())
-      : this.blacklist.add(this.check())
+      ? this.blacklist.forever(payload)
+      : this.blacklist.add(payload)
   }
 
   /**
@@ -69,7 +77,7 @@ class JWT {
    * @returns {Payload}
    */
   createPayload (user) {
-    return this.factory().addCustomClaims(this.getSubjectClaimFor(user)).make()
+    return this.payloadFactory().addCustomClaims(this.getSubjectClaimFor(user)).make()
   }
 
   /**
@@ -77,7 +85,7 @@ class JWT {
    *
    * @returns {PayloadFactory}
    */
-  factory () {
+  payloadFactory () {
     return new PayloadFactory({
       request: this.request,
       options: this.options
