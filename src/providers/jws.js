@@ -1,7 +1,7 @@
 'use strict'
 
 const JWS = require('jws')
-const BaseProvider = require('./provider')
+const BaseProvider = require('./base-provider')
 
 class JWTProvider extends BaseProvider {
   /**
