@@ -4,7 +4,7 @@ const Fs = require('fs')
 
 class Provider {
   constructor ({ options }) {
-    const { secret, algorithm, keys } = options
+    const { secret, keys, algorithm } = options
 
     this.keys = keys
     this.secret = secret
