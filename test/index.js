@@ -1,7 +1,7 @@
 'use strict'
 
+const HapiJWT = require('..')
 const Lab = require('@hapi/lab')
-const HapiJWT = require('../src')
 const Hapi = require('@hapi/hapi')
 const { expect } = require('@hapi/code')
 
