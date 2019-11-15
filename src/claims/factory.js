@@ -55,7 +55,7 @@ class ClaimFactory {
    * @returns {String}
    */
   iss () {
-    return this.request.url.host // this.request.domain()
+    return this.request.root()
   }
 
   /**
