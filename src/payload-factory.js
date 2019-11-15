@@ -7,6 +7,7 @@ const ClaimFactory = require('./claims/factory')
 class PayloadFactory {
   constructor ({ request, options }) {
     this.claimSet = new ClaimSet()
+    this.customClaims = new ClaimSet()
     this.claimFactory = new ClaimFactory({ request, options })
   }
 
@@ -49,7 +50,7 @@ class PayloadFactory {
    */
   addCustomClaims (claims) {
     Object.keys(claims).forEach(name => {
-      this.addClaim(name, claims[name])
+      this.customClaims.add(name, claims[name])
     })
 
     return this
@@ -72,6 +73,10 @@ class PayloadFactory {
   buildClaimsMap () {
     this.defaultClaims.forEach(claim => {
       this.addClaim(claim, this.claimFactory.make(claim))
+    })
+
+    this.customClaims.forEach((value, key) => {
+      this.addClaim(key, value)
     })
 
     return this
