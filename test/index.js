@@ -66,7 +66,7 @@ describe('JWT', () => {
         handler: async request => {
           const payload = await request.jwt.check()
 
-          return payload.get()
+          return payload.toObject()
         }
       }
     ])

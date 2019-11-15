@@ -13,11 +13,11 @@ class Token {
   }
 
   /**
-   * Returns the JWT.
+   * Returns the plain JWT string.
    *
-   * @returns {Object}
+   * @returns {String}
    */
-  get () {
+  plain () {
     return this.value
   }
 

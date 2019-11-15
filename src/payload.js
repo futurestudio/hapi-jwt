@@ -17,6 +17,17 @@ class Payload {
    *
    * @returns {*}
    */
+  get (name) {
+    return this.getClaim(name)
+  }
+
+  /**
+   * Alias for `.get(name)` returning the claim identified by `name`.
+   *
+   * @param {String} name
+   *
+   * @returns {*}
+   */
   getClaim (name) {
     return this.claimSet.get(name)
   }
@@ -35,17 +46,8 @@ class Payload {
    *
    * @returns {Object}
    */
-  get () {
+  toObject () {
     return this.claimSet.toObject()
-  }
-
-  /**
-   * Alias for .get(). Returns the payload as an object.
-   *
-   * @returns {Object}
-   */
-  asObject () {
-    return this.get()
   }
 
   /**

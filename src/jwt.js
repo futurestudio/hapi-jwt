@@ -22,7 +22,7 @@ class JWT {
    */
   async for (user) {
     return this.provider.encode(
-      this.createPayload(user).get()
+      this.createPayload(user).toObject()
     )
   }
 
@@ -33,7 +33,7 @@ class JWT {
    */
   async check () {
     const payload = this.payloadFactory().addCustomClaims(
-      await this.provider.decode(this.token().get())
+      await this.provider.decode(this.token().plain())
     ).make()
 
     if (this.blacklist.isEnabled() && await this.blacklist.has(payload)) {
