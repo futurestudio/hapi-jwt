@@ -55,11 +55,11 @@ class ClaimFactory {
    * @returns {String}
    */
   iss () {
-    return this.request.url.host // this.request.root()
+    return this.request.url.host // this.request.domain()
   }
 
   /**
-   * Returns the issued at claim (iat) value in milliseconds.
+   * Returns the issued at claim (iat) value in seconds.
    *
    * @returns {Number}
    */
@@ -68,7 +68,7 @@ class ClaimFactory {
   }
 
   /**
-   * Returns the not before claim (nbf) value in milliseconds.
+   * Returns the not before claim (nbf) value in seconds.
    *
    * @returns {Date}
    */
@@ -77,7 +77,7 @@ class ClaimFactory {
   }
 
   /**
-   * Returns the expire claim (exp) value in milliseconds.
+   * Returns the expire claim (exp) value in seconds.
    *
    * @returns {Number}
    */
