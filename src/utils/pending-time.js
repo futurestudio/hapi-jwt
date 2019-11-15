@@ -41,7 +41,7 @@ class PendingTime {
    * @returns {PendingTime}
    */
   addMinutes (minutes) {
-    this.time.add(minutes, 'minute')
+    this.time = this.time.add(minutes, 'minute')
 
     return this
   }
@@ -54,7 +54,7 @@ class PendingTime {
    * @returns {PendingTime}
    */
   addYears (years) {
-    this.time.add(years, 'year')
+    this.time = this.time.add(years, 'year')
 
     return this
   }
