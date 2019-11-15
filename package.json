@@ -53,6 +53,6 @@
   "scripts": {
     "format": "eslint **/*.js --fix",
     "lint": "eslint **/*.js",
-    "test": "lab --coverage --leaks --lint"
+    "test": "lab --assert @hapi/code --leaks --coverage --lint --reporter console --output stdout --reporter html --output ./coverage/coverage.html"
   }
 }
