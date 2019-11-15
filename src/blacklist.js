@@ -65,10 +65,8 @@ class Blacklist {
    * @returns {Number}
    */
   getMillisecondsUntilExpired (payload) {
-    const now = TimeUtils.now().getInMilliseconds()
-    const exp = TimeUtils.from(payload.getClaim('exp')).getInMilliseconds()
-
-    // TODO exp time is not correct yet
+    const exp = payload.getClaim('exp')
+    const now = TimeUtils.now().getInSeconds()
 
     return exp - now
   }
