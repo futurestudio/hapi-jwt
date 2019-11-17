@@ -13,15 +13,6 @@ class TimeUtils {
   static now () {
     return new PendingTime()
   }
-
-  /**
-   * Returns a `PendingTime` instance for the given `timestamp`.
-   *
-   * @returns {PendingTime}
-   */
-  static from (timestamp) {
-    return new PendingTime(timestamp)
-  }
 }
 
 module.exports = TimeUtils
