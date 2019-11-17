@@ -83,7 +83,7 @@ module.exports = {
    * lifetime is 15 minutes.
    *
    */
-  ttl: process.env.JWT_TTL || 15,
+  ttl: parseInt(process.env.JWT_TTL) || 15,
 
   /**
    * --------------------------------------------------------------------------
@@ -106,7 +106,7 @@ module.exports = {
      * If you don't want or need this functionality, you may disable it here.
      *
      */
-    enabled: true,
+    enabled: process.env.JWT_BLACKLIST_ENABLED || true,
 
     /**
      * --------------------------------------------------------------------------
@@ -129,7 +129,7 @@ module.exports = {
        * invalidated tokens from other caching properties of your application.
        *
        */
-      name: process.env.JWT_BLACKLIST_NAME || 'jwt/blacklist',
+      name: process.env.JWT_BLACKLIST_NAME || 'jwt:blacklist',
 
       /**
        * --------------------------------------------------------------------------
@@ -145,7 +145,7 @@ module.exports = {
        * `@hapi/catbox-memcached` package by yourself.
        *
        */
-      provider: '@hapi/catbox-your-client'
+      provider: process.env.JWT_BLACKLIST_PROVIDER
     }
   }
 }
