@@ -1,85 +1,125 @@
 'use strict'
 
-const HapiJWT = require('..')
 const Lab = require('@hapi/lab')
+const Crypto = require('crypto')
 const Hapi = require('@hapi/hapi')
 const { expect } = require('@hapi/code')
+const Payload = require('../src/payload')
+const ClaimSet = require('../src/claims/set')
+const Blacklist = require('../src/blacklist')
+const TimeUtils = require('../src/utils/time')
+const CatboxRedis = require('@hapi/catbox-redis')
+const PayloadFactory = require('../src/payload-factory')
 
-const { describe, it } = exports.lab = Lab.script()
+const { describe, it, before } = exports.lab = Lab.script()
 
-async function prepareServer () {
-  const server = new Hapi.Server()
-  await server.initialize()
+const blacklist = new Blacklist({ options: { blacklist: { enabled: true } } })
 
-  await server.register({
-    plugin: HapiJWT,
-    options: {
-      secret: '123456789-123456789-123456789-123456789',
-      blacklist: {
-        enabled: true,
-        cache: {
-          provider: '@hapi/catbox-redis'
-        }
-      }
-    }
-  })
-
-  return server
-}
-
-async function createJwt () {
-  const server = await prepareServer()
-  server.route({
-    method: 'GET',
-    path: '/',
-    handler: async request => {
-      const user = { id: 1, name: 'Marcus' }
-
-      return request.jwt.for(user)
-    }
-  })
-
-  const request = {
-    method: 'GET',
-    url: '/'
-  }
-
-  const { result: token } = await server.inject(request)
-
-  return token
+function jti () {
+  return Crypto.randomBytes(20).toString('hex')
 }
 
 describe('JWT Blacklist', () => {
-  it('blacklists a JWT', { timeout: 5000 }, async () => {
-    const server = await prepareServer()
+  before(async () => {
+    const server = new Hapi.Server()
+    const cacheName = 'test-jwt-blacklist'
 
-    server.route({
-      method: 'GET',
-      path: '/',
-      handler: async request => {
-        await request.jwt.invalidate()
+    await server.cache.provision({ name: cacheName, provider: CatboxRedis })
+    blacklist.cache = server.cache({ cache: cacheName, segment: cacheName })
 
-        try {
-          await request.jwt.check()
+    await server.initialize()
+  })
 
-          return 'not blacklisted'
-        } catch (error) {
-          return 'blacklisted'
-        }
-      }
-    })
+  it('token without exp', async () => {
+    const payload = new PayloadFactory({
+      request: {
+        root: () => 'hapi-jwt.test'
+      },
+      options: { ttl: 1 }
+    }).make()
 
-    const token = await createJwt()
+    payload.claimSet.delete('exp')
 
-    const request = {
-      method: 'GET',
-      url: '/',
-      headers: {
-        authorization: `Bearer ${token}`
-      }
-    }
+    await blacklist.add(payload)
+    expect(await blacklist.has(payload)).to.be.true()
+  })
 
-    const { result } = await server.inject(request)
-    expect(result).to.equal('blacklisted')
+  it('token exp', async () => {
+    const claimSet = new ClaimSet(Object.entries({
+      sub: 1,
+      jti: jti(),
+      exp: TimeUtils.now().addMinutes(1).getInSeconds()
+    }))
+
+    const payload = new Payload(claimSet)
+
+    await blacklist.add(payload)
+    expect(await blacklist.has(payload)).to.be.true()
+  })
+
+  it('forever', async () => {
+    const claimSet = new ClaimSet(Object.entries({
+      sub: 1,
+      jti: jti(),
+      exp: TimeUtils.now().addMinutes(1).getInSeconds()
+    }))
+
+    const payload = new Payload(claimSet)
+
+    await blacklist.forever(payload)
+    expect(await blacklist.has(payload)).to.be.true()
+  })
+
+  it('returns early when already on the blacklist', async () => {
+    const claimSet = new ClaimSet(Object.entries({
+      sub: 1,
+      jti: jti(),
+      exp: TimeUtils.now().addMinutes(1).getInSeconds()
+    }))
+
+    const payload = new Payload(claimSet)
+    expect(await blacklist.has(payload)).to.be.false()
+    await blacklist.add(payload)
+    expect(await blacklist.has(payload)).to.be.true()
+    await blacklist.add(payload)
+    expect(await blacklist.has(payload)).to.be.true()
+  })
+
+  it('removes from the blacklist', async () => {
+    const claimSet = new ClaimSet(Object.entries({
+      sub: 1,
+      jti: jti(),
+      exp: TimeUtils.now().addMinutes(1).getInSeconds()
+    }))
+
+    const payload = new Payload(claimSet)
+
+    await blacklist.add(payload)
+    expect(await blacklist.has(payload)).to.be.true()
+    await blacklist.remove(payload)
+    expect(await blacklist.has(payload)).to.be.false()
+  })
+
+  it('uses a token ID generator', async () => {
+    const tokenId = jti()
+    const claimSet = new ClaimSet(Object.entries({
+      jti: tokenId,
+      sub: 1,
+      exp: TimeUtils.now().addMinutes(1).getInSeconds()
+    }))
+
+    const payload = new Payload(claimSet)
+
+    expect(await blacklist.tokenIdentifier(payload)).to.equal(tokenId)
+  })
+
+  it('is enabled/disabled', async () => {
+    const blacklistDisabled = new Blacklist({ options: { blacklist: { enabled: false } } })
+    expect(blacklistDisabled.isDisabled()).to.be.true()
+    expect(blacklistDisabled.isEnabled()).to.be.false()
+
+    const blacklistEnabled = new Blacklist({ options: { blacklist: { enabled: true } } })
+    expect(blacklistEnabled.isEnabled()).to.be.true()
+    expect(blacklistEnabled.isDisabled()).to.be.false()
   })
 })
