@@ -24,7 +24,8 @@
     "eslint-plugin-node": "~10.0.0",
     "eslint-plugin-promise": "~4.2.1",
     "eslint-plugin-standard": "~4.0.1",
-    "husky": "~3.0.9"
+    "husky": "~3.0.9",
+    "node-forge": "~0.9.1"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -53,6 +54,8 @@
   "scripts": {
     "format": "eslint **/*.js --fix",
     "lint": "eslint **/*.js",
-    "test": "lab --assert @hapi/code --leaks --coverage --lint --reporter console --output stdout --reporter html --output ./coverage/coverage.html"
+    "test": "lab --assert @hapi/code --leaks --coverage --lint --reporter console --output stdout --reporter html --output ./coverage/coverage.html",
+    "test:single": "lab --assert @hapi/code --leaks --lint --id",
+    "test:list": "lab --assert @hapi/code --dry --verbose"
   }
 }
