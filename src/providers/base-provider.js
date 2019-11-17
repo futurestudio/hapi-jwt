@@ -9,6 +9,8 @@ class Provider {
     this.keys = keys
     this.secret = secret
     this.algorithm = algorithm
+
+    this.ensureValidAlgorithm()
   }
 
   /**
@@ -18,8 +20,20 @@ class Provider {
    */
   get supportedAlgorithms () {
     return []
+      .concat(this.noneAlgorithm)
       .concat(this.symmetricAlgorithms)
       .concat(this.asymmetricAlgorithms)
+  }
+
+  /**
+   * Returns the list of symmetric algorithms.
+   *
+   * @returns {Array}
+   */
+  get noneAlgorithm () {
+    return [
+      'none'
+    ]
   }
 
   /**
@@ -53,6 +67,20 @@ class Provider {
    */
   getAlgorithm () {
     return this.algorithm
+  }
+
+  /**
+   * Determines whether the used algorithm is
+   * supported by all available algorithms.
+   *
+   * @returns {Boolean}
+   */
+  ensureValidAlgorithm () {
+    if (this.supportedAlgorithms.includes(this.algorithm)) {
+      return
+    }
+
+    throw new Error(`Invalid algorithm. Supported algorithms: ${this.supportedAlgorithms}`)
   }
 
   /**
@@ -123,11 +151,30 @@ class Provider {
    * @returns {String}
    */
   async readFile (file) {
-    return new Promise((resolve, reject) => {
-      Fs.readFile(file, (err, content) => {
-        if (err) { return reject(err) }
+    if (await this.fileExists(file)) {
+      return new Promise((resolve, reject) => {
+        Fs.readFile(file, (error, content) => {
+          return error
+            ? reject(error)
+            : resolve(content.toString())
+        })
+      })
+    }
 
-        resolve(content.toString())
+    throw new Error(`Key not found at path ${file}`)
+  }
+
+  /**
+   * Determine whether the given file exists at `path`.
+   * Always returns a boolean, false if the file is
+   * not existent, and true if it exists.
+   *
+   * @returns {Boolean}
+   */
+  async fileExists (path) {
+    return new Promise(resolve => {
+      Fs.access(path, error => {
+        return error ? resolve(false) : resolve(true)
       })
     })
   }
