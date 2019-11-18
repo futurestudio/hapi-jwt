@@ -1,7 +1,12 @@
 <div align="center">
+  <img src="https://github.com/futurestudio/hapi-jwt/blob/master/media/hapi-jwt.png?raw=true" alt="hapi-jwt logo" width="471" style="max-width:100%;">
+  <br/>
+  <br/>
+
   <p>
-    <code>hapi-jwt</code>
+    Sign and decode JSON web tokens (JWT) in your hapi app.
   </p>
+
   <br/>
   <p>
     <a href="#installation"><strong>Installation</strong></a> ·
