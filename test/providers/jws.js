@@ -7,16 +7,20 @@ const Crypto = require('crypto')
 const Forge = require('node-forge')
 const { expect } = require('@hapi/code')
 const Token = require('../../src/token')
+const MockKeys = require('../mocks/keys')
 const JwsProvider = require('../../src/providers/jws')
 
 const { describe, it, before, after } = exports.lab = Lab.script()
 
-const publicKeyPath = Path.resolve(__dirname, 'fixtures/public_key')
-const privateKeyPath = Path.resolve(__dirname, 'fixtures/private_key')
+const keyDir = Path.resolve(__dirname, 'fixtures')
+const publicKeyPath = Path.resolve(keyDir, 'public_key')
+const privateKeyPath = Path.resolve(keyDir, 'private_key')
 
 const secret = Crypto.randomBytes(10).toString('hex')
 
 async function createFile (path, content) {
+  await new Promise(resolve => Fs.mkdir(keyDir, resolve))
+
   return new Promise((resolve, reject) => {
     Fs.writeFile(path, content, (error) => {
       return error ? reject(error) : resolve()
@@ -32,7 +36,7 @@ async function deleteFile (path) {
   })
 }
 
-describe('JWT Blacklist', () => {
+describe('JWS Provider', () => {
   before(async () => {
     const { privateKey, publicKey } = Forge.pki.rsa.generateKeyPair(1024)
 
@@ -66,6 +70,38 @@ describe('JWT Blacklist', () => {
 
     const payload = { jti: 1, sub: 'Marcus' }
     const jws = new JwsProvider({ options: { secret, keys, algorithm: 'RS256' } })
+    const jwt = await jws.encode(payload)
+    const token = new Token(jwt)
+    expect(token.isValid()).to.be.true()
+
+    const result = await jws.decode(token.plain())
+    expect(result).to.equal(payload)
+  })
+
+  it('encodes and decodes a JWS using a private key in OpenSSH and public key in PEM format (asymmetric, RS256)', async () => {
+    const { privateKey, publicKey } = Forge.pki.rsa.generateKeyPair(1024)
+    const publicKeyAsPem = Forge.pki.publicKeyToPem(publicKey)
+    const privateKeyAsOpenSSH = Forge.ssh.privateKeyToOpenSSH(privateKey)
+
+    const payload = { jti: 1, sub: 'Marcus' }
+    const jws = new JwsProvider({ options: { keys: {}, algorithm: 'RS256' } })
+    jws.getSigningKey = async () => { return privateKeyAsOpenSSH }
+    jws.getVerificationKey = async () => { return publicKeyAsPem }
+
+    const jwt = await jws.encode(payload)
+    const token = new Token(jwt)
+    expect(token.isValid()).to.be.true()
+
+    const result = await jws.decode(token.plain())
+    expect(result).to.equal(payload)
+  })
+
+  it('encodes and decodes a JWS using ED25519 keys (asymmetric, ES256)', async () => {
+    const payload = { jti: 1, sub: 'Marcus' }
+    const jws = new JwsProvider({ options: { keys: {}, algorithm: 'ES256' } })
+    jws.getSigningKey = async () => { return MockKeys.es256.private }
+    jws.getVerificationKey = async () => { return MockKeys.es256.public }
+
     const jwt = await jws.encode(payload)
     const token = new Token(jwt)
     expect(token.isValid()).to.be.true()
