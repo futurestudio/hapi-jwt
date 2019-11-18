@@ -1,6 +1,7 @@
 'use strict'
 
 const JWT = require('./jwt')
+const Joi = require('@hapi/joi')
 const Merge = require('deepmerge')
 const DefaultConfig = require('../config/default')
 
@@ -32,6 +33,7 @@ class Plugin {
     })
 
     this.createOptions(config)
+    this.ensureValidOptions()
     await this.createCache(server)
 
     server.decorate('request', 'jwt', (request) => {
@@ -50,6 +52,45 @@ class Plugin {
    */
   createOptions (options) {
     this.options = Merge(this.options, options)
+  }
+
+  /**
+   * Validate the plugin options and throw if invalid.
+   *
+   * @throws
+   */
+  ensureValidOptions () {
+    Joi.attempt(this.options, Joi.object({
+      secret: Joi.string(),
+
+      keys: Joi
+        .object({
+          public: Joi.string().when('secret', { is: Joi.string(), then: Joi.optional() }).required(),
+          private: Joi.string().when('secret', { is: Joi.string(), then: Joi.optional() }).required()
+        })
+        .when('secret', { is: Joi.string().min(1), then: Joi.optional() }),
+
+      algorithm: Joi.string().required(),
+
+      ttl: Joi.number().required(),
+
+      blacklist: Joi
+        .object()
+        .keys({
+          enabled: Joi.boolean().required(),
+
+          cache: Joi
+            .object()
+            .keys({
+              name: Joi.string(),
+
+              provider: Joi.string()
+            })
+            .required()
+            .when('enabled', { is: true, then: Joi.object({ name: Joi.required(), provider: Joi.required() }) })
+        })
+    })
+    )
   }
 
   /**
