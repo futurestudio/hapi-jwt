@@ -35,12 +35,13 @@ Join the <a href="https://futurestud.io/university">Future Studio University and
 
 
 ## Introduction
-tba: `hapi-jwt`
+`hapi-jwt` is a hapi plugin to seamlessly interact with JSON web tokens (JWT). Using this plugin, you'll simply create a token via `request.jwt.for(user)` and retrieve the payload of an existing token via `request.jwt.payload()`
 
+This `hapi-jwt` plugin simplifies the JWT creation and decoding to a minimum. It decorates your hapi request object with a JWT instance: `request.jwt`. This decoration provides a convenient interface to interact with JWTs incoming with client requests.
 
 
 ## Installation
-Add `hapi-jwt` as a dependency to your project:
+Install `hapi-jwt` as a dependency to your project:
 
 ```bash
 npm i @futurestudio/hapi-jwt
@@ -48,18 +49,42 @@ npm i @futurestudio/hapi-jwt
 
 
 ## Usage
-tba.
+Register `hapi-jwt` as a plugin to your hapi server.
 
 ```js
 await server.register({
   plugin: require('@futurestudio/hapi-jwt'),
   options: {
-    // tbd.
+    secret: 'your-random-secret' // this is the minimum required configuration to sign/decode JWTs
   }
 })
 
 // went smooth like hot chocolate :)
 ```
+
+
+## Plugin Options
+This plugin ships with a comprehensive [default configuration](https://github.com/futurestudio/hapi-jwt/blob/master/config/default.js). Please have a look at all available keys and related comments.
+
+The following list outlines all options:
+
+- **`secret`:** (string) the secret key used to sign and decode a JWT (with a symmetric algorithm). The secret is required if you don't use a keypair provided in `keys`
+- **`keys`:** (object) describing a key pair when using asymmetric algorithms
+  - **`public`:** (string) the path to the public key. The public key must be in PEM format
+  - **`private`:** (string) the path to the private key. The private key can be in PEM format, OpenSSH format works as well.
+- **`algorithm`:** (string, default: HS256) the JWT signing algorithm
+- **`ttl`:** (number, default: 15) the JWT lifetime in minutes
+- **`blacklist`:** (object) configurating the blacklist
+  - **`enabled`:** (boolean, default: false) enables the blacklist
+  - **`cache`:** (object) configures a hapi cache instance for the JWT blacklist. These options are used to create a cache via [server.cache](https://hapi.dev/api/?v=18.4.0#-servercacheoptions)
+   - **`name`:** (string) identifies both, the blacklisting cache name and segment
+   - **`provider`:** (string) defines the catbox caching client, like `@hapi/catbox-redis`
+
+
+## JWT Blacklist
+Activating the JWT blacklist requires a cache. `hapi-jwt` uses hapi's [`server.cache`](https://hapi.dev/api/?v=18.4.0#-servercacheoptions) method to provision a blacklist storage.
+
+When using the blacklist, please ensure a persistent caching store, like Redis via [@hapi/catbox-redis](https://github.com/hapijs/catbox-redis) or Memcached via [@hapi/catbox-memcached](https://github.com/hapijs/catbox-memcached). Using hapi's default internal caching instance stores the blacklist in-memory and will be gone when restarting the server.
 
 
 ## Links & Resources
