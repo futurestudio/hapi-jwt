@@ -14,7 +14,8 @@ class JWT {
   }
 
   /**
-   * Generate a JWT for the given `user`.
+   * Alias for `JWT.sign(user)` creating
+   * a signed JWT for the given `user`.
    *
    * @param {Object} user
    *
@@ -24,6 +25,17 @@ class JWT {
     return this.provider.encode(
       this.createPayload(user).toObject()
     )
+  }
+
+  /**
+   * Generate a JWT for the given `user`.
+   *
+   * @param {Object} user
+   *
+   * @returns {String}
+   */
+  async sign (user) {
+    return this.for(user)
   }
 
   /**

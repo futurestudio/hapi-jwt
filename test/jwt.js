@@ -30,7 +30,7 @@ describe('JWT', () => {
     const user = { id: 1, name: 'Marcus' }
     const jwt = new JWT({ options: getOptions(), request, cache })
 
-    const jws = await jwt.for(user)
+    const jws = await jwt.sign(user)
     request.bearerToken = () => { return jws }
 
     const token = new Token(jws)
