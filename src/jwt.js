@@ -47,7 +47,7 @@ class JWT {
    */
   async payload () {
     const payload = this.payloadFactory().addCustomClaims(
-      await this.provider.decode(this.token().plain())
+      await this.provider.decode(this.token().toString())
     ).make()
 
     if (this.blacklist.isEnabled() && await this.blacklist.has(payload)) {

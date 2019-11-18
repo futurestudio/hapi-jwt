@@ -24,6 +24,15 @@ class Token {
   }
 
   /**
+   * Alias method for `.plain()` returning the plain JWT string.
+   *
+   * @returns {String}
+   */
+  toString () {
+    return this.plain()
+  }
+
+  /**
    * Throws if the given JWT is invalid.
    *
    * @throws
