@@ -48,7 +48,7 @@ describe('JWT', () => {
     expect(token).to.exist()
   })
 
-  it('decdes a JWT', async () => {
+  it('decodes a JWT', async () => {
     const user = { id: 1212, name: 'Marcus' }
 
     const server = await prepareServer()

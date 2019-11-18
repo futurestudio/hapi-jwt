@@ -8,6 +8,7 @@ const { expect } = require('@hapi/code')
 const { describe, it } = exports.lab = Lab.script()
 
 const options = {
+  secret: 'shhh',
   blacklist: {
     enabled: true,
     cache: {
