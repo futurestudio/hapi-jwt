@@ -73,7 +73,7 @@ class Provider {
    * Determines whether the used algorithm is
    * supported by all available algorithms.
    *
-   * @returns {Boolean}
+   * @throws
    */
   ensureValidAlgorithm () {
     if (this.supportedAlgorithms.includes(this.algorithm)) {

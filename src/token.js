@@ -10,6 +10,8 @@ class Token {
    */
   constructor (value) {
     this.value = value
+
+    this.ensureValidToken()
   }
 
   /**
@@ -19,6 +21,19 @@ class Token {
    */
   plain () {
     return this.value
+  }
+
+  /**
+   * Throws if the given JWT is invalid.
+   *
+   * @throws
+   */
+  ensureValidToken () {
+    if (this.isValid()) {
+      return
+    }
+
+    throw new Error(`Invalid JWT. Looks like the token is neither signed nor encrypted. Received token: ${this.value}`)
   }
 
   /**
