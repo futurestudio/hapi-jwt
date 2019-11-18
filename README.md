@@ -10,7 +10,8 @@
   <br/>
   <p>
     <a href="#installation"><strong>Installation</strong></a> ·
-    <a href="#usage"><strong>Usage</strong></a>
+    <a href="#usage"><strong>Usage</strong></a> ·
+    <a href="#plugin-options"><strong>Plugin Options</strong></a>
   </p>
   <br/>
   <br/>
@@ -35,7 +36,7 @@ Join the <a href="https://futurestud.io/university">Future Studio University and
 
 
 ## Introduction
-`hapi-jwt` is a hapi plugin to seamlessly interact with JSON web tokens (JWT). Using this plugin, you'll simply create a token via `request.jwt.for(user)` and retrieve the payload of an existing token via `request.jwt.payload()`
+`hapi-jwt` is a hapi plugin to seamlessly interact with JSON web tokens (JWT). Using this plugin, you’ll simply create a token via `request.jwt.for(user)` and retrieve the payload of an existing token via `request.jwt.payload()`
 
 This `hapi-jwt` plugin simplifies the JWT creation and decoding to a minimum. It decorates your hapi request object with a JWT instance: `request.jwt`. This decoration provides a convenient interface to interact with JWTs incoming with client requests.
 
@@ -55,12 +56,88 @@ Register `hapi-jwt` as a plugin to your hapi server.
 await server.register({
   plugin: require('@futurestudio/hapi-jwt'),
   options: {
-    secret: 'your-random-secret' // this is the minimum required configuration to sign/decode JWTs
+    secret: 'your-secret' // this is the minimum required configuration to sign/decode JWTs
   }
 })
 
 // went smooth like hot chocolate :)
 ```
+
+Registering the plugin decorates the hapi request with a JWT instance providing methods to sign and decode a JWT.
+
+
+### Create a JWT
+When creating the JWT, `hapi-jwt` creates a handful of claims. It generates (claim names in parentheses):
+
+- a token identifier (`jti`)
+- issued at date in seconds (`iat`)
+- validity start date in seconds (`nbf`)
+- expiration date in seconds, based on the TTL (`exp`)
+- retrieves the token issuer from the request domain (`iss`)
+- it also looks for an `id` field in the credentials (`sub`)
+
+
+Create a signed JWT using `request.jwt.for(payload)`:
+
+```js
+server.route({
+  method: 'POST',
+  path: '/login',
+  options: {
+    auth: 'basic', // assume the login route requires basic authentication
+    handler: async request => {
+      const token = await request.jwt.for(request.auth.credentials)
+
+      return token
+    }
+  }
+})
+```
+
+You can debug a JWT on [jwt.io](https://jwt.io/) and have a look at the token headers and payload.
+
+A sample token payload looks like this:
+
+```
+{
+  jti: 'babf5099a4561173c91f2cdc6c61c1aa',
+  iss: 'http://localhost',
+  iat: 1574094111,
+  nbf: 1574094111,
+  exp: 1574095011,
+  sub: 1
+}
+```
+
+
+### Decode a JWT and access the payload
+Accessing the payload automatically decodes the bearer token from the request headers. Calling `request.jwt.payload()` returns a `Payload` instance:
+
+```js
+server.route({
+  method: 'GET',
+  path: '/me',
+  options: {
+    auth: 'jwt',
+    handler: async request => {
+      const payload = await request.jwt.payload()
+
+      const user = payload.has('sub')
+        ? await User.findbyId(payload.get('sub'))
+        : await User.findOne({ email: payload.get('email') })
+
+      return token
+    }
+  }
+})
+```
+
+A payload has the following methods:
+
+- **`toObject`:** returns a plain JavaScript object
+- **`get(key)`:** returns the value identified by `key`
+- **`has(key)`:** returns a boolean, `true` if the payload contains the key and `false` otherwise
+- **`missing(key)`:** returns a boolean, `true` if the payload **does not** contain the key and `false` if the key is present in the payload
 
 
 ## Plugin Options
@@ -68,7 +145,7 @@ This plugin ships with a comprehensive [default configuration](https://github.co
 
 The following list outlines all options:
 
-- **`secret`:** (string) the secret key used to sign and decode a JWT (with a symmetric algorithm). The secret is required if you don't use a keypair provided in `keys`
+- **`secret`:** (string) the secret key used to sign and decode a JWT (with a symmetric algorithm). The secret is required if you don’t use a keypair provided in `keys`
 - **`keys`:** (object) describing a key pair when using asymmetric algorithms
   - **`public`:** (string) the path to the public key. The public key must be in PEM format
   - **`private`:** (string) the path to the private key. The private key can be in PEM format, OpenSSH format works as well.
@@ -82,9 +159,9 @@ The following list outlines all options:
 
 
 ## JWT Blacklist
-Activating the JWT blacklist requires a cache. `hapi-jwt` uses hapi's [`server.cache`](https://hapi.dev/api/?v=18.4.0#-servercacheoptions) method to provision a blacklist storage.
+Activating the JWT blacklist requires a cache. `hapi-jwt` uses hapi’s [`server.cache`](https://hapi.dev/api/?v=18.4.0#-servercacheoptions) method to provision a blacklist storage.
 
-When using the blacklist, please ensure a persistent caching store, like Redis via [@hapi/catbox-redis](https://github.com/hapijs/catbox-redis) or Memcached via [@hapi/catbox-memcached](https://github.com/hapijs/catbox-memcached). Using hapi's default internal caching instance stores the blacklist in-memory and will be gone when restarting the server.
+When using the blacklist, please ensure a persistent caching store, like Redis via [@hapi/catbox-redis](https://github.com/hapijs/catbox-redis) or Memcached via [@hapi/catbox-memcached](https://github.com/hapijs/catbox-memcached). Using hapi’s default internal caching instance stores the blacklist in-memory and will be gone when restarting the server.
 
 
 ## Links & Resources
