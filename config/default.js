@@ -106,7 +106,7 @@ module.exports = {
      * If you don't want or need this functionality, you may disable it here.
      *
      */
-    enabled: process.env.JWT_BLACKLIST_ENABLED || true,
+    enabled: process.env.JWT_BLACKLIST_ENABLED || false,
 
     /**
      * --------------------------------------------------------------------------

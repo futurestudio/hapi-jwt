@@ -22,7 +22,7 @@ const request = {
 }
 
 const getOptions = (options = {}) => {
-  return Merge.all([DefaultOptions, options, { secret: Crypto.randomBytes(20).toString('hex') }])
+  return Merge.all([DefaultOptions, { secret: Crypto.randomBytes(20).toString('hex'), blacklist: { enabled: true } }, options])
 }
 
 describe('JWT', () => {

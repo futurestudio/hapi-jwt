@@ -17,7 +17,7 @@ describe('JWT Config', () => {
     expect(config.algorithm).to.equal('HS256')
     expect(config.keys.public).to.be.undefined()
     expect(config.keys.private).to.be.undefined()
-    expect(config.blacklist.enabled).to.be.true()
+    expect(config.blacklist.enabled).to.be.false()
     expect(config.blacklist.cache.provider).to.be.undefined()
     expect(config.blacklist.cache.name).to.be.equal('jwt:blacklist')
   })
