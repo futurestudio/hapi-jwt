@@ -11,7 +11,7 @@
   <br/>
   <p>
     <a href="https://travis-ci.com/futurestudio/hapi-jwt"><img src="https://travis-ci.com/futurestudio/hapi-jwt.svg?branch=master" alt="Build Status" data-canonical-src="https://travis-ci.com/futurestudio/hapi-jwt.svg?branch=master" style="max-width:100%;"></a>
-    <a href="https://www.npmjs.com/package/hapi-jwt"><img src="https://img.shields.io/npm/v/hapi-jwt.svg" alt="hapi-jwt Version"></a>
+    <a href="https://www.npmjs.com/package/@futurestudio/hapi-jwt"><img src="https://img.shields.io/npm/v/@futurestudio/hapi-jwt.svg" alt="hapi-jwt Version"></a>
     <a href="https://greenkeeper.io/" rel="nofollow"><img src="https://badges.greenkeeper.io/futurestudio/hapi-jwt.svg" alt="Greenkeeper badge" data-canonical-src="https://badges.greenkeeper.io/futurestudio/hapi-jwt.svg" style="max-width:100%;"></a>
   </p>
   <p>
