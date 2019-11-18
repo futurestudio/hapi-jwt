@@ -36,7 +36,7 @@ describe('JWT', () => {
     const token = new Token(jws)
     expect(token.isValid()).to.be.true()
 
-    const decoded = await jwt.check(token.plain())
+    const decoded = await jwt.payload(token.plain())
     expect(decoded.get('jti')).to.exist()
     expect(decoded.get('exp')).to.exist()
     expect(decoded.get('iat')).to.exist()
@@ -53,7 +53,7 @@ describe('JWT', () => {
     request.bearerToken = () => { return jws }
 
     const token = new Token(jws)
-    const decoded = await jwt.check(token.plain())
+    const decoded = await jwt.payload(token.plain())
     expect(decoded.get('jti')).to.exist()
   })
 
@@ -65,7 +65,7 @@ describe('JWT', () => {
     request.bearerToken = () => { return jws }
 
     const blacklistHas = Sinon.stub(jwt.blacklist, 'has').returns(true)
-    await expect(jwt.check()).to.reject()
+    await expect(jwt.payload()).to.reject()
 
     blacklistHas.restore()
   })

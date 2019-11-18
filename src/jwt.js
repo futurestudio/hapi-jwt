@@ -30,8 +30,10 @@ class JWT {
    * Check and verify that the token is valid.
    *
    * @returns {Payload}
+   *
+   * @throws
    */
-  async check () {
+  async payload () {
     const payload = this.payloadFactory().addCustomClaims(
       await this.provider.decode(this.token().plain())
     ).make()
@@ -53,7 +55,7 @@ class JWT {
       throw new Error('You must enable the blacklist to invalidate a token')
     }
 
-    const payload = await this.check()
+    const payload = await this.payload()
 
     return forever
       ? this.blacklist.forever(payload)

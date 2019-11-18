@@ -64,7 +64,7 @@ describe('JWT', () => {
         method: 'GET',
         path: '/decode',
         handler: async request => {
-          const payload = await request.jwt.check()
+          const payload = await request.jwt.payload()
 
           return payload.toObject()
         }
