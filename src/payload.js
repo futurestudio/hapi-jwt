@@ -42,7 +42,7 @@ class Payload {
   }
 
   /**
-   * Returns the payload as an object containing the claims.
+   * Returns the payload as an object containing all claims.
    *
    * @returns {Object}
    */

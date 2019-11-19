@@ -56,9 +56,8 @@ class Token {
   }
 
   /**
-   * Determines whether the token is a signed token (JWS).
-   * Signed tokens consist of three parts, separated by
-   * four dots.
+   * Determines whether the token is a signed token (JWS). Signed
+   * tokens consist of three parts, separated by two dots.
    *
    * @returns {Boolean}
    */
@@ -67,9 +66,8 @@ class Token {
   }
 
   /**
-   * Determines whether the token is an encrypted token (JWE).
-   * Encrypted tokens consist of five parts, separated by
-   * four dots.
+   * Determines whether the token is an encrypted token (JWE). Encrypted
+   * tokens consist of five parts, separated by four dots.
    *
    * @returns {Boolean}
    */

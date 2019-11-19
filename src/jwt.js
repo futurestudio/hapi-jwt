@@ -39,7 +39,8 @@ class JWT {
   }
 
   /**
-   * Check and verify that the token is valid.
+   * Decodes the JWT and returns a payload
+   * instance containing the claims set.
    *
    * @returns {Payload}
    *
@@ -58,9 +59,11 @@ class JWT {
   }
 
   /**
-   * Invalidate the `token` by adding it to a blacklist.
+   * Invalidate the JWT that is present as a bearer
+   * token in the authorization request header
+   * by adding it to a blacklist.
    *
-   * @returns {JWT}
+   * @throws
    */
   async invalidate (forever = false) {
     if (this.blacklist.isDisabled()) {
