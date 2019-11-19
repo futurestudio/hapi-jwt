@@ -4,14 +4,14 @@
   <br/>
 
   <p>
-    Sign and decode JSON web tokens (JWT) in your hapi app.
+    Seamless JWT signing and decoding in your hapi app.
   </p>
 
   <br/>
   <p>
     <a href="#installation"><strong>Installation</strong></a> ·
-    <a href="#usage"><strong>Usage</strong></a> ·
-    <a href="#plugin-options"><strong>Plugin Options</strong></a>
+    <a href="#plugin-options"><strong>Plugin Options</strong></a> ·
+    <a href="#usage"><strong>Usage</strong></a>
   </p>
   <br/>
   <br/>
@@ -36,9 +36,9 @@ Join the <a href="https://futurestud.io/university">Future Studio University and
 
 
 ## Introduction
-`hapi-jwt` is a hapi plugin to seamlessly interact with JSON web tokens (JWT). Using this plugin, you’ll simply create a token via `request.jwt.for(user)` and retrieve the payload of an existing token via `request.jwt.payload()`
+`hapi-jwt` is a hapi plugin to create (sign) and access (decode) JSON web tokens (JWT).
 
-This `hapi-jwt` plugin simplifies the JWT creation and decoding to a minimum. It decorates your hapi request object with a JWT instance: `request.jwt`. This decoration provides a convenient interface to interact with JWTs incoming with client requests.
+Create a token via `request.jwt.for(user)` and retrieve the payload of an existing token via `request.jwt.payload()`
 
 
 ## Installation
@@ -49,7 +49,7 @@ npm i @futurestudio/hapi-jwt
 ```
 
 
-## Usage
+### Register the Plugin
 Register `hapi-jwt` as a plugin to your hapi server.
 
 ```js
@@ -63,21 +63,41 @@ await server.register({
 // went smooth like hot chocolate :)
 ```
 
-Registering the plugin decorates the hapi request with a JWT instance providing methods to sign and decode a JWT.
+
+### Plugin Options
+This plugin ships with a comprehensive [default configuration](https://github.com/futurestudio/hapi-jwt/blob/master/config/default.js). Please have a look at all available keys and related comments.
+
+The following list outlines all options:
+
+- **`secret`:** (string) the secret key used to sign and decode a JWT (with a symmetric algorithm). The secret is required if you don’t use a keypair provided in `keys`
+- **`keys`:** (object) describing a key pair when using asymmetric algorithms
+  - **`public`:** (string) the path to the public key. The public key must be in PEM format
+  - **`private`:** (string) the path to the private key. The private key can be in PEM format, OpenSSH format works as well.
+- **`algorithm`:** (string, default: HS256) the JWT signing algorithm
+- **`ttl`:** (number, default: 15) the JWT lifetime in minutes
+- **`blacklist`:** (object) configurating the blacklist
+  - **`enabled`:** (boolean, default: false) enables the blacklist
+  - **`cache`:** (object) configures a hapi cache instance for the JWT blacklist. These options are used to create a cache via [server.cache](https://hapi.dev/api/?v=18.4.0#-servercacheoptions)
+   - **`name`:** (string) identifies both, the blacklisting cache name and segment
+   - **`provider`:** (string) defines the catbox caching client, like `@hapi/catbox-redis`
+
+
+## Usage
+`hapi-jwt` decorates hapi’s request object with a JWT instance: `request.jwt`. This decoration provides a convenient interface to interact with JWTs.
 
 
 ### Create a JWT
-When creating the JWT, `hapi-jwt` creates a handful of claims. It generates (claim names in parentheses):
+Creating a (signed) JWT is as simple as `await request.jwt.for({ your: 'data' })`:
 
-- a token identifier (`jti`)
-- issued at date in seconds (`iat`)
-- validity start date in seconds (`nbf`)
-- expiration date in seconds, based on the TTL (`exp`)
-- retrieves the token issuer from the request domain (`iss`)
-- it also looks for an `id` field in the credentials (`sub`)
+When creating the JWT, `hapi-jwt` creates a handful of claims besides your provided data. It generates the following claims:
 
+- `jti`: a token identifier
+- `iat`: issued at date in seconds
+- `nbf`: validity start date in seconds
+- `exp`: expiration date in seconds, based on the TTL
+- `iss`: retrieves the token issuer from the request domain
+- `sub`: it also looks for an `id` field in the credentials
 
-Create a signed JWT using `request.jwt.for(payload)`:
 
 ```js
 server.route({
@@ -94,7 +114,7 @@ server.route({
 })
 ```
 
-You can debug a JWT on [jwt.io](https://jwt.io/) and have a look at the token headers and payload.
+You can debug a created JWT on [jwt.io](https://jwt.io/) and have a look at the token headers and payload.
 
 A sample token payload looks like this:
 
@@ -111,7 +131,9 @@ A sample token payload looks like this:
 
 
 ### Decode a JWT and access the payload
-Accessing the payload automatically decodes the bearer token from the request headers. Calling `request.jwt.payload()` returns a `Payload` instance:
+You can access the JWT payload via `await request.jwt.payload()`. Accessing the payload expects a valid JWT in the authorization request header. The authorization header must be in a format like `Bearer <your-jwt>`.
+
+Calling `request.jwt.payload()` returns a `Payload` instance containing the JWT claims set:
 
 ```js
 server.route({
@@ -132,30 +154,14 @@ server.route({
 })
 ```
 
-A payload has the following methods:
+
+#### Payload
+A payload instance returned from `await request.jwt.payload()` has the following methods:
 
 - **`toObject`:** returns a plain JavaScript object
 - **`get(key)`:** returns the value identified by `key`
-- **`has(key)`:** returns a boolean, `true` if the payload contains the key and `false` otherwise
-- **`missing(key)`:** returns a boolean, `true` if the payload **does not** contain the key and `false` if the key is present in the payload
-
-
-## Plugin Options
-This plugin ships with a comprehensive [default configuration](https://github.com/futurestudio/hapi-jwt/blob/master/config/default.js). Please have a look at all available keys and related comments.
-
-The following list outlines all options:
-
-- **`secret`:** (string) the secret key used to sign and decode a JWT (with a symmetric algorithm). The secret is required if you don’t use a keypair provided in `keys`
-- **`keys`:** (object) describing a key pair when using asymmetric algorithms
-  - **`public`:** (string) the path to the public key. The public key must be in PEM format
-  - **`private`:** (string) the path to the private key. The private key can be in PEM format, OpenSSH format works as well.
-- **`algorithm`:** (string, default: HS256) the JWT signing algorithm
-- **`ttl`:** (number, default: 15) the JWT lifetime in minutes
-- **`blacklist`:** (object) configurating the blacklist
-  - **`enabled`:** (boolean, default: false) enables the blacklist
-  - **`cache`:** (object) configures a hapi cache instance for the JWT blacklist. These options are used to create a cache via [server.cache](https://hapi.dev/api/?v=18.4.0#-servercacheoptions)
-   - **`name`:** (string) identifies both, the blacklisting cache name and segment
-   - **`provider`:** (string) defines the catbox caching client, like `@hapi/catbox-redis`
+- **`has(key)`:** returns a boolean, `true` if the payload contains the claim identified by `key`, otherwise `false`
+- **`missing(key)`:** returns a boolean, `true` if the payload **does not** contain the claim identified by key, otherwise `false`
 
 
 ## JWT Blacklist
