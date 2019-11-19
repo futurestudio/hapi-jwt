@@ -105,7 +105,7 @@ When creating the JWT, `hapi-jwt` creates a handful of claims besides your provi
 - `nbf`: validity start date in seconds
 - `exp`: expiration date in seconds, based on the TTL
 - `iss`: retrieves the token issuer from the request domain
-- `sub`: it also looks for an `id` field in the credentials
+- `sub`: if the given `user` object contains an `id` field, it will be used for the `sub` claim
 
 
 ```js
