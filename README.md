@@ -83,11 +83,18 @@ The following list outlines all options:
 
 
 ## Usage
-`hapi-jwt` decorates hapi’s request object with a JWT instance: `request.jwt`. This decoration provides a convenient interface to interact with JWTs.
+`hapi-jwt` decorates hapi’s request object with a JWT instance: `request.jwt`.
+
+This decoration provides a convenient interface to interact with JWTs:
+
+  - `await request.jwt.for(user)`: creates a signed JWT
+  - `await request.jwt.payload()`: returns the decoded JWT payload. This expects a valid JWT as a bearer token in the authorization header.
+  - `await request.jwt.invalidate()`: decodes the JWT on the request (see payload method) and adds it to to the blacklist
+  - `await request.jwt.invalidate('forever')`: blacklists a JWT indefinitely
 
 
 ### Create a JWT
-Creating a (signed) JWT is as simple as `await request.jwt.for({ your: 'data' })`:
+Creating a (signed) JWT is as simple as `await request.jwt.for({ id: 1, name: 'Marcus' })`:
 
 When creating the JWT, `hapi-jwt` creates a handful of claims besides your provided data. It generates the following claims:
 
