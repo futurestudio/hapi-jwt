@@ -85,6 +85,8 @@ The following list outlines all options:
 ## Usage
 `hapi-jwt` decorates hapi’s request object with a JWT instance: `request.jwt`.
 
+
+### Decorations
 This decoration provides a convenient interface to interact with JWTs:
 
   - `await request.jwt.for(user)`: creates a signed JWT
