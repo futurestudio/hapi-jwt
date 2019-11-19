@@ -78,8 +78,8 @@ The following list outlines all options:
 - **`blacklist`:** (object) configurating the blacklist
   - **`enabled`:** (boolean, default: false) enables the blacklist
   - **`cache`:** (object) configures a hapi cache instance for the JWT blacklist. These options are used to create a cache via [server.cache](https://hapi.dev/api/?v=18.4.0#-servercacheoptions)
-   - **`name`:** (string) identifies both, the blacklisting cache name and segment
-   - **`provider`:** (string) defines the catbox caching client, like `@hapi/catbox-redis`
+     - **`name`:** (string) identifies both, the blacklisting cache name and segment
+     - **`provider`:** (string) defines the catbox caching client, like `@hapi/catbox-redis`
 
 
 ## Usage
