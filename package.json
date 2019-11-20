@@ -1,6 +1,6 @@
 {
   "name": "@futurestudio/hapi-jwt",
-  "description": "hapi plugin to sign, verify, and invalidate/blacklist JWTs",
+  "description": "hapi plugin to sign, decode, and invalidate/blacklist JWTs",
   "version": "0.0.0",
   "author": "Marcus Pöhls <marcus@futurestud.io>",
   "bugs": {
