@@ -50,6 +50,9 @@
   "license": "MIT",
   "main": "src/index.js",
   "types": "src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/futurestudio/hapi-jwt.git"
