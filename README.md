@@ -4,7 +4,7 @@
   <br/>
 
   <p>
-    Seamless JWT signing and decoding in your hapi app.
+    Seamless JWT signing, decoding, and blacklisting in your hapi app.
   </p>
 
   <br/>
