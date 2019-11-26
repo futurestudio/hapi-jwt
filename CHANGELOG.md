@@ -8,6 +8,7 @@
 - checks to ensure a payload when creating a JWT
 
 ### Updated
+- bump dependencies
 - moved TypeScript definitions file to `typings/index.d.ts`
 
 
