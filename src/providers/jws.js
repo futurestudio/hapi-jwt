@@ -12,6 +12,10 @@ class JWTProvider extends BaseProvider {
      * @returns {String}
      */
   async encode (payload) {
+    if (!payload) {
+      throw new Error('Cannot create a JWT from an empty payload')
+    }
+
     const signer = JWS.createSign({
       header: {
         alg: this.getAlgorithm(),
@@ -36,6 +40,10 @@ class JWTProvider extends BaseProvider {
    * @returns {Object}
    */
   async decode (token) {
+    if (!token) {
+      throw new Error(`Cannot decode JWT, received: ${token}`)
+    }
+
     const verifier = JWS.createVerify({
       signature: token,
       algorithm: this.getAlgorithm(),

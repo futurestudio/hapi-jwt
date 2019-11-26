@@ -130,6 +130,16 @@ describe('JWS Provider', () => {
     expect(decoded).to.equal(payload)
   })
 
+  it('throws when creating a token without payload', async () => {
+    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    await expect(jws.encode()).to.reject()
+  })
+
+  it('throws when creating a token with null payload', async () => {
+    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    await expect(jws.encode(null)).to.reject()
+  })
+
   it('ensures valid algorithm', async () => {
     expect(() => {
       // eslint-disable-next-line
@@ -144,9 +154,19 @@ describe('JWS Provider', () => {
     await expect(jws.encode('value')).to.reject()
   })
 
+  it('throws when decoding an empty token', async () => {
+    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    await expect(jws.decode()).to.reject('Cannot decode JWT, received: undefined')
+  })
+
+  it('throws when decoding a null token', async () => {
+    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    await expect(jws.decode(null)).to.reject('Cannot decode JWT, received: null')
+  })
+
   it('throws when decoding an invalid token', async () => {
     const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
-    await expect(jws.decode('invalid.token.format')).to.reject('Invalid token')
+    await expect(jws.decode('token.notMatching.theSecret')).to.reject('Invalid token')
   })
 
   it('throws when using non-existent key', async () => {
