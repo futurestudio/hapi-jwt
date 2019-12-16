@@ -11,7 +11,7 @@
     "dayjs": "~1.8.17",
     "deepmerge": "~4.2.2",
     "hapi-request-utilities": "~3.0.0",
-    "jws": "~3.2.2"
+    "jws": "~4.0.0"
   },
   "devDependencies": {
     "@hapi/catbox": "~10.2.3",
