@@ -59,8 +59,8 @@
     "url": "git+https://github.com/futurestudio/hapi-jwt.git"
   },
   "scripts": {
-    "format": "eslint **/*.js --fix",
-    "lint": "eslint **/*.js",
+    "format": "eslint ./src/**/*.js --fix",
+    "lint": "eslint ./src/**/*.js",
     "test": "lab --assert @hapi/code --leaks --coverage --lint --reporter console --output stdout --reporter html --output ./coverage/coverage.html",
     "test:single": "lab --assert @hapi/code --leaks --lint --id",
     "test:list": "lab --assert @hapi/code --dry --verbose"
