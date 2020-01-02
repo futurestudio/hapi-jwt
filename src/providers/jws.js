@@ -1,6 +1,7 @@
 'use strict'
 
-const JWS = require('jws')
+const JwSigner = require('jws')
+const { JWS, errors } = require('jose')
 const BaseProvider = require('./base-provider')
 
 class JWTProvider extends BaseProvider {
@@ -16,12 +17,19 @@ class JWTProvider extends BaseProvider {
       throw new Error('Cannot create a JWT from an empty payload')
     }
 
-    const signer = JWS.createSign({
-      header: {
-        alg: this.getAlgorithm(),
-        typ: typeof payload === 'object' ? 'JWT' : undefined
-      },
+    return this.isNoneAlgorithm()
+      ? this.signWithoutAlgorithm(payload)
+      : this.signWithAlgorithm(payload)
+  }
+
+  isNoneAlgorithm () {
+    return this.getAlgorithm() === 'none'
+  }
+
+  async signWithoutAlgorithm (payload) {
+    const signer = JwSigner.createSign({
       payload,
+      header: this.header(),
       privateKey: await this.getSigningKey()
     })
 
@@ -30,6 +38,17 @@ class JWTProvider extends BaseProvider {
         .on('done', token => resolve(token))
         .on('error', error => reject(error))
     })
+  }
+
+  async signWithAlgorithm (payload) {
+    return JWS.sign(payload, await this.getSigningKey(), this.header(payload))
+  }
+
+  header (payload) {
+    return {
+      alg: this.getAlgorithm(),
+      typ: typeof payload === 'object' ? 'JWT' : undefined
+    }
   }
 
   /**
@@ -44,23 +63,17 @@ class JWTProvider extends BaseProvider {
       throw new Error(`Cannot decode JWT, received: ${token}`)
     }
 
-    const verifier = JWS.createVerify({
-      signature: token,
-      algorithm: this.getAlgorithm(),
-      publicKey: await this.getVerificationKey()
-    })
+    try {
+      const result = JWS.verify(token, await this.getVerificationKey(), {
+        algorithms: [this.getAlgorithm()]
+      })
 
-    return new Promise((resolve, reject) => {
-      verifier
-        .on('error', error => reject(error))
-        .on('done', (valid, decoded) => {
-          if (valid) {
-            return resolve(decoded.payload)
-          }
-
-          throw new Error('Invalid token')
-        })
-    })
+      return result
+    } catch (error) {
+      throw error instanceof errors.JWSInvalid
+        ? new Error('Invalid token')
+        : error
+    }
   }
 }
 
