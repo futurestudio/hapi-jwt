@@ -20,20 +20,8 @@ class Provider {
    */
   get supportedAlgorithms () {
     return []
-      .concat(this.noneAlgorithm)
       .concat(this.symmetricAlgorithms)
       .concat(this.asymmetricAlgorithms)
-  }
-
-  /**
-   * Returns the list of symmetric algorithms.
-   *
-   * @returns {Array}
-   */
-  get noneAlgorithm () {
-    return [
-      'none'
-    ]
   }
 
   /**
