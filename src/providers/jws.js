@@ -1,6 +1,6 @@
 'use strict'
 
-const JWS = require('jws')
+const { JWS, errors: { JWSInvalid } } = require('jose')
 const BaseProvider = require('./base-provider')
 
 class JWTProvider extends BaseProvider {
@@ -16,20 +16,14 @@ class JWTProvider extends BaseProvider {
       throw new Error('Cannot create a JWT from an empty payload')
     }
 
-    const signer = JWS.createSign({
-      header: {
-        alg: this.getAlgorithm(),
-        typ: typeof payload === 'object' ? 'JWT' : undefined
-      },
-      payload,
-      privateKey: await this.getSigningKey()
-    })
+    return JWS.sign(payload, await this.getSigningKey(), this.header(payload))
+  }
 
-    return new Promise((resolve, reject) => {
-      signer
-        .on('done', token => resolve(token))
-        .on('error', error => reject(error))
-    })
+  header (payload) {
+    return {
+      alg: this.getAlgorithm(),
+      typ: typeof payload === 'object' ? 'JWT' : undefined
+    }
   }
 
   /**
@@ -44,23 +38,15 @@ class JWTProvider extends BaseProvider {
       throw new Error(`Cannot decode JWT, received: ${token}`)
     }
 
-    const verifier = JWS.createVerify({
-      signature: token,
-      algorithm: this.getAlgorithm(),
-      publicKey: await this.getVerificationKey()
-    })
+    try {
+      const result = JWS.verify(token, await this.getVerificationKey(), {
+        algorithms: [this.getAlgorithm()]
+      })
 
-    return new Promise((resolve, reject) => {
-      verifier
-        .on('error', error => reject(error))
-        .on('done', (valid, decoded) => {
-          if (valid) {
-            return resolve(decoded.payload)
-          }
-
-          throw new Error('Invalid token')
-        })
-    })
+      return result
+    } catch (error) {
+      throw new JWSInvalid('Invalid token')
+    }
   }
 }
 

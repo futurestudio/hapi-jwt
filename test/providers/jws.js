@@ -8,7 +8,7 @@ const Forge = require('node-forge')
 const { expect } = require('@hapi/code')
 const Token = require('../../src/token')
 const MockKeys = require('../mocks/keys')
-const JwsProvider = require('../../src/providers/jws')
+const JWS = require('../../src/providers/jws')
 
 const { describe, it, before, after } = exports.lab = Lab.script()
 
@@ -52,7 +52,7 @@ describe('JWS Provider', () => {
   it('encode an decode a symmetric JWS, HS256)', async () => {
     const payload = { jti: 1 }
 
-    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    const jws = new JWS({ options: { secret, algorithm: 'HS256' } })
     const jwt = await jws.encode(payload)
 
     const token = new Token(jwt)
@@ -69,7 +69,7 @@ describe('JWS Provider', () => {
     }
 
     const payload = { jti: 1, sub: 'Marcus' }
-    const jws = new JwsProvider({ options: { secret, keys, algorithm: 'RS256' } })
+    const jws = new JWS({ options: { secret, keys, algorithm: 'RS256' } })
     const jwt = await jws.encode(payload)
     const token = new Token(jwt)
     expect(token.isValid()).to.be.true()
@@ -84,7 +84,7 @@ describe('JWS Provider', () => {
     const privateKeyAsOpenSSH = Forge.ssh.privateKeyToOpenSSH(privateKey)
 
     const payload = { jti: 1, sub: 'Marcus' }
-    const jws = new JwsProvider({ options: { keys: {}, algorithm: 'RS256' } })
+    const jws = new JWS({ options: { keys: {}, algorithm: 'RS256' } })
     jws.getSigningKey = async () => { return privateKeyAsOpenSSH }
     jws.getVerificationKey = async () => { return publicKeyAsPem }
 
@@ -98,7 +98,7 @@ describe('JWS Provider', () => {
 
   it('encodes and decodes a JWS using ED25519 keys (asymmetric, ES256)', async () => {
     const payload = { jti: 1, sub: 'Marcus' }
-    const jws = new JwsProvider({ options: { keys: {}, algorithm: 'ES256' } })
+    const jws = new JWS({ options: { keys: {}, algorithm: 'ES256' } })
     jws.getSigningKey = async () => { return MockKeys.es256.private }
     jws.getVerificationKey = async () => { return MockKeys.es256.public }
 
@@ -110,17 +110,14 @@ describe('JWS Provider', () => {
     expect(result).to.equal(payload)
   })
 
-  it('creates an unsigned JWT (algo none)', async () => {
-    const jws = new JwsProvider({ options: { secret, algorithm: 'none' } })
-    const jwt = await jws.encode({ jti: 1, sub: 'Marcus' })
-    const token = new Token(jwt)
-    expect(token.isValid()).to.be.true()
+  it('throws when creating an unsigned JWT (algo none)', async () => {
+    expect(() => new JWS({ options: { secret, algorithm: 'none' } })).to.throw()
   })
 
   it('creates a token with string payload', async () => {
     const payload = 'Hello Marcus'
 
-    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    const jws = new JWS({ options: { secret, algorithm: 'HS256' } })
     const jwt = await jws.encode(payload)
 
     const token = new Token(jwt)
@@ -131,41 +128,41 @@ describe('JWS Provider', () => {
   })
 
   it('throws when creating a token without payload', async () => {
-    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    const jws = new JWS({ options: { secret, algorithm: 'HS256' } })
     await expect(jws.encode()).to.reject()
   })
 
   it('throws when creating a token with null payload', async () => {
-    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    const jws = new JWS({ options: { secret, algorithm: 'HS256' } })
     await expect(jws.encode(null)).to.reject()
   })
 
   it('ensures valid algorithm', async () => {
     expect(() => {
       // eslint-disable-next-line
-      new JwsProvider({ options: { secret, algorithm: 'not-available' } })
+      new JWS({ options: { secret, algorithm: 'not-available' } })
     }
     ).to.throw()
   })
 
   it('throws on error when encoding', async () => {
-    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    const jws = new JWS({ options: { secret, algorithm: 'HS256' } })
     jws.getAlgorithm = () => { return 'invalid' }
     await expect(jws.encode('value')).to.reject()
   })
 
   it('throws when decoding an empty token', async () => {
-    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    const jws = new JWS({ options: { secret, algorithm: 'HS256' } })
     await expect(jws.decode()).to.reject('Cannot decode JWT, received: undefined')
   })
 
   it('throws when decoding a null token', async () => {
-    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    const jws = new JWS({ options: { secret, algorithm: 'HS256' } })
     await expect(jws.decode(null)).to.reject('Cannot decode JWT, received: null')
   })
 
   it('throws when decoding an invalid token', async () => {
-    const jws = new JwsProvider({ options: { secret, algorithm: 'HS256' } })
+    const jws = new JWS({ options: { secret, algorithm: 'HS256' } })
     await expect(jws.decode('token.notMatching.theSecret')).to.reject('Invalid token')
   })
 
@@ -174,7 +171,7 @@ describe('JWS Provider', () => {
       private: './wrong-path'
     }
 
-    const jws = new JwsProvider({ options: { secret, keys, algorithm: 'RS256' } })
+    const jws = new JWS({ options: { secret, keys, algorithm: 'RS256' } })
     await expect(jws.encode('payload')).to.reject()
   })
 
@@ -183,7 +180,7 @@ describe('JWS Provider', () => {
       private: './wrong-path'
     }
 
-    const jws = new JwsProvider({ options: { secret, keys, algorithm: 'RS256' } })
+    const jws = new JWS({ options: { secret, keys, algorithm: 'RS256' } })
     jws.fileExists = () => { return true }
     await expect(jws.encode('payload')).to.reject()
   })

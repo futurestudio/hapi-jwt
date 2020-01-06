@@ -7,30 +7,30 @@
     "url": "https://github.com/futurestudio/hapi-jwt/issues"
   },
   "dependencies": {
-    "@hapi/joi": "~16.1.8",
-    "dayjs": "~1.8.17",
+    "@hapi/joi": "~17.0.0",
+    "dayjs": "~1.8.18",
     "deepmerge": "~4.2.2",
     "hapi-request-utilities": "~3.0.0",
-    "jws": "~3.2.2"
+    "jose": "~1.18.1"
   },
   "devDependencies": {
-    "@hapi/catbox": "~10.2.3",
+    "@hapi/catbox": "~11.0.0",
     "@hapi/catbox-redis": "~5.0.5",
-    "@hapi/code": "~7.0.0",
+    "@hapi/code": "~8.0.1",
     "@hapi/hapi": "~18.4.0",
-    "@hapi/lab": "~21.0.0",
+    "@hapi/lab": "~22.0.3",
     "eslint": "~6.8.0",
     "eslint-config-standard": "~14.1.0",
-    "eslint-plugin-import": "~2.19.0",
+    "eslint-plugin-import": "~2.19.1",
     "eslint-plugin-node": "~11.0.0",
     "eslint-plugin-promise": "~4.2.1",
     "eslint-plugin-standard": "~4.0.1",
     "husky": "~3.1.0",
     "node-forge": "~0.9.1",
-    "sinon": "~8.0.0"
+    "sinon": "~8.0.2"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=12"
   },
   "homepage": "https://github.com/futurestudio/hapi-jwt#readme",
   "husky": {
@@ -58,8 +58,8 @@
     "url": "git+https://github.com/futurestudio/hapi-jwt.git"
   },
   "scripts": {
-    "format": "eslint **/*.js --fix",
-    "lint": "eslint **/*.js",
+    "format": "eslint ./src/**/*.js --fix",
+    "lint": "eslint ./src/**/*.js",
     "test": "lab --assert @hapi/code --leaks --coverage --lint --reporter console --output stdout --reporter html --output ./coverage/coverage.html",
     "test:single": "lab --assert @hapi/code --leaks --lint --id",
     "test:list": "lab --assert @hapi/code --dry --verbose"
