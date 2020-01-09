@@ -41,6 +41,19 @@ Join the <a href="https://futurestud.io/university">Future Studio University and
 Create a token via `request.jwt.for(user)` and retrieve the payload of an existing token via `request.jwt.payload()`
 
 
+## Requirements
+> **hapi v19 (or later)** and **Node.js v12 (or newer)**
+
+This plugin requires **hapi v19** (or later) and **Node.js v12 or newer**.
+
+
+### Compatibility
+| Major Release | [hapi.js](https://github.com/hapijs/hapi) version | Node.js version |
+| --- | --- | --- |
+| `v2` | `>=19 @hapi/hapi` | `>=12` |
+| `v1` | `>=17 hapi` | `>=8` |
+
+
 ## Installation
 Install `hapi-jwt` as a dependency to your project:
 

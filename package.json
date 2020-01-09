@@ -8,10 +8,10 @@
   },
   "dependencies": {
     "@hapi/joi": "~17.0.0",
-    "dayjs": "~1.8.18",
+    "dayjs": "~1.8.19",
     "deepmerge": "~4.2.2",
     "hapi-request-utilities": "~3.0.0",
-    "jose": "~1.18.1"
+    "jose": "~1.18.2"
   },
   "devDependencies": {
     "@hapi/catbox": "~11.0.0",
@@ -25,9 +25,9 @@
     "eslint-plugin-node": "~11.0.0",
     "eslint-plugin-promise": "~4.2.1",
     "eslint-plugin-standard": "~4.0.1",
-    "husky": "~4.0.2",
+    "husky": "~4.0.3",
     "node-forge": "~0.9.1",
-    "sinon": "~8.0.2"
+    "sinon": "~8.0.4"
   },
   "engines": {
     "node": ">=12"
