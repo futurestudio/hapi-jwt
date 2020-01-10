@@ -10,7 +10,7 @@
     "@hapi/joi": "~17.0.0",
     "dayjs": "~1.8.19",
     "deepmerge": "~4.2.2",
-    "hapi-request-utilities": "~3.0.0",
+    "hapi-request-utilities": "~4.0.0",
     "jose": "~1.18.2"
   },
   "devDependencies": {
