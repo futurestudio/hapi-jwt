@@ -23,12 +23,20 @@ describe('JWT Token', () => {
     expect(new Token('j.w.t.as.jwe').isValid()).to.be.true()
   })
 
+  it('isUnsigned', async () => {
+    expect(() => {
+      new Token('jwt').isSigned()
+    }).to.throw()
+    expect(new Token('j.w.').isSigned()).to.be.false()
+    expect(new Token('j.w.s').isSigned()).to.be.true()
+  })
+
   it('isSigned', async () => {
     expect(() => {
       new Token('jwt').isSigned()
     }).to.throw()
-    expect(new Token('j.w.').isSigned()).to.be.true()
-    expect(new Token('j.w.s').isSigned()).to.be.true()
+    expect(new Token('j.w.').isUnsigned()).to.be.true()
+    expect(new Token('j.w.s').isUnsigned()).to.be.false()
   })
 
   it('isEncrypted', async () => {

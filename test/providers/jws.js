@@ -110,8 +110,13 @@ describe('JWS Provider', () => {
     expect(result).to.equal(payload)
   })
 
-  it('throws when creating an unsigned JWT (algo none)', async () => {
-    expect(() => new JWS({ options: { secret, algorithm: 'none' } })).to.throw()
+  it('creates an unsigned JWT (algo none)', async () => {
+    const jws = new JWS({ options: { secret, algorithm: 'none' } })
+    const jwt = await jws.encode({ jti: 1, sub: 'Marcus' })
+    const token = new Token(jwt)
+    expect(token.isValid()).to.be.true()
+    expect(token.isSigned()).to.be.false()
+    expect(token.isEncrypted()).to.be.false()
   })
 
   it('creates a token with string payload', async () => {
