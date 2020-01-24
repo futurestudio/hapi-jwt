@@ -1,6 +1,7 @@
 'use strict'
 
 const Fs = require('fs')
+const { JWK } = require('jose')
 
 class Provider {
   constructor ({ options }) {
@@ -20,8 +21,20 @@ class Provider {
    */
   get supportedAlgorithms () {
     return []
+      .concat(this.noneAlgorithm)
       .concat(this.symmetricAlgorithms)
       .concat(this.asymmetricAlgorithms)
+  }
+
+  /**
+   * Returns the list of symmetric algorithms.
+   *
+   * @returns {Array}
+   */
+  get noneAlgorithm () {
+    return [
+      'none'
+    ]
   }
 
   /**
@@ -64,20 +77,11 @@ class Provider {
    * @throws
    */
   ensureValidAlgorithm () {
-    if (this.supportedAlgorithms.includes(this.algorithm)) {
+    if (this.supportedAlgorithms.includes(this.getAlgorithm())) {
       return
     }
 
     throw new Error(`Invalid algorithm. Supported algorithms: ${this.supportedAlgorithms}`)
-  }
-
-  /**
-   * Determines whether the used algorithm is asymmetric.
-   *
-   * @returns {Boolean}
-   */
-  isAsymmetric () {
-    return this.asymmetricAlgorithms.includes(this.algorithm)
   }
 
   /**
@@ -88,9 +92,45 @@ class Provider {
    * @returns {String}
    */
   async getSigningKey () {
+    if (this.isUnsigned()) {
+      return this.getNoneKey()
+    }
+
     return this.isAsymmetric()
       ? this.getPrivateKey()
       : this.getSecret()
+  }
+
+  /**
+   * Determines whether to use the 'none' algorithm.
+   *
+   * @returns {Boolean}
+   */
+  isUnsigned () {
+    return this.noneAlgorithm.includes(
+      this.getAlgorithm()
+    )
+  }
+
+  /**
+   * Determines whether the used algorithm is asymmetric.
+   *
+   * @returns {Boolean}
+   */
+  isAsymmetric () {
+    return this.asymmetricAlgorithms.includes(
+      this.getAlgorithm()
+    )
+  }
+
+  /**
+   * Returns the 'None' key object that can be used with
+   * the 'jose' package to opt-in for unsecured JWS.
+   *
+   * @returns {Object}
+   */
+  getNoneKey () {
+    return JWK.None
   }
 
   /**
@@ -109,7 +149,7 @@ class Provider {
   /**
    * Returns the signing secret.
    *
-   * @returns {Array}
+   * @returns {String}
    */
   async getSecret () {
     return this.secret
