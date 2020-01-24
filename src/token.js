@@ -52,7 +52,20 @@ class Token {
    * @returns {Boolean}
    */
   isValid () {
-    return this.isSigned() || this.isEncrypted()
+    return this.isUnsigned() || this.isSigned() || this.isEncrypted()
+  }
+
+  /**
+   * Determines whether the token is an unsigned token (JWS). Unssigned
+   * tokens consist of two parts with a trailing dot. The third part
+   * of an unsigend token is empty in contrast to a signed token.
+   *
+   * @returns {Boolean}
+   */
+  isUnsigned () {
+    const parts = this.value.split('.')
+
+    return parts.length === 3 && parts[2] === ''
   }
 
   /**
@@ -62,7 +75,9 @@ class Token {
    * @returns {Boolean}
    */
   isSigned () {
-    return this.value.split('.').length === 3
+    const parts = this.value.split('.')
+
+    return parts.length === 3 && parts[2] !== ''
   }
 
   /**
