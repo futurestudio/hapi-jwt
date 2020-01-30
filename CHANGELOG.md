@@ -1,7 +1,7 @@
 # Changelog
 
 
-## [2.1.0](https://github.com/futurestudio/hapi-jwt/compare/v2.0.0...v2.1.0) - 2020-01-xx
+## [2.1.0](https://github.com/futurestudio/hapi-jwt/compare/v2.0.0...v2.1.0) - 2020-01-30
 
 ### Added
 - `isUnsigned()` method on a token instance to determine whether a token is unsigned
