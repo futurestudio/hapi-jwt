@@ -168,7 +168,7 @@ server.route({
         ? await User.findbyId(payload.get('sub'))
         : await User.findOne({ email: payload.get('email') })
 
-      return token
+      return user
     }
   }
 })
