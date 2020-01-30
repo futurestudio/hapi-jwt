@@ -4,8 +4,8 @@
 ## [2.1.0](https://github.com/futurestudio/hapi-jwt/compare/v2.0.0...v2.1.0) - 2020-01-xx
 
 ### Added
-- bring back the `'none'` algorithm (the `jose` package added support in version 1.21.0)
 - `isUnsigned()` method on a token instance to determine whether a token is unsigned
+- bringing back the `'none'` algorithm (the [`jose`](https://github.com/panva/jose/releases/tag/v1.21.0) package added support in version 1.21.0)
 
 
 ## [2.0.0](https://github.com/futurestudio/hapi-jwt/compare/v1.0.0...v2.0.0) - 2020-01-10
