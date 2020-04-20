@@ -1,6 +1,6 @@
 /// <reference types='node' />
 
-import { Plugin, Request } from '@hapi/hapi';
+import { Plugin } from '@hapi/hapi';
 
 
 declare module '@hapi/hapi' {
