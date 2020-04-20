@@ -7,8 +7,8 @@
     "url": "https://github.com/futurestudio/hapi-jwt/issues"
   },
   "dependencies": {
-    "@hapi/joi": "~17.1.0",
-    "dayjs": "~1.8.19",
+    "@hapi/joi": "~17.1.1",
+    "dayjs": "~1.8.24",
     "deepmerge": "~4.2.2",
     "hapi-request-utilities": "~4.0.0",
     "jose": "~1.26.0"
@@ -17,17 +17,17 @@
     "@hapi/catbox": "~11.1.0",
     "@hapi/catbox-redis": "~5.0.5",
     "@hapi/code": "~8.0.1",
-    "@hapi/hapi": "~19.1.0",
-    "@hapi/lab": "~22.0.3",
+    "@hapi/hapi": "~19.1.1",
+    "@hapi/lab": "~22.0.4",
     "eslint": "~6.8.0",
-    "eslint-config-standard": "~14.1.0",
-    "eslint-plugin-import": "~2.20.0",
+    "eslint-config-standard": "~14.1.1",
+    "eslint-plugin-import": "~2.20.2",
     "eslint-plugin-node": "~11.1.0",
     "eslint-plugin-promise": "~4.2.1",
     "eslint-plugin-standard": "~4.0.1",
-    "husky": "~4.2.1",
+    "husky": "~4.2.5",
     "node-forge": "~0.9.1",
-    "sinon": "~9.0.0"
+    "sinon": "~9.0.2"
   },
   "engines": {
     "node": ">=12"
