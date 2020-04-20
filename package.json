@@ -48,7 +48,7 @@
     "scopes"
   ],
   "license": "MIT",
-  "main": "src/index.js",
+  "main": "index.js",
   "types": "typings/index.d.ts",
   "publishConfig": {
     "access": "public"
