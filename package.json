@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@hapi/catbox": "~11.1.0",
-    "@hapi/catbox-redis": "~5.0.5",
+    "@hapi/catbox-redis": "~6.0.1",
     "@hapi/code": "~8.0.1",
     "@hapi/hapi": "~20.0.0",
     "@hapi/lab": "~22.0.4",
