@@ -11,7 +11,7 @@
     "dayjs": "~1.10.1",
     "deepmerge": "~4.2.2",
     "hapi-request-utilities": "~4.1.1",
-    "jose": "~1.28.0"
+    "jose": "~3.6.1"
   },
   "devDependencies": {
     "@hapi/catbox": "~11.1.0",
