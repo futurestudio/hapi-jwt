@@ -27,7 +27,7 @@
     "eslint-plugin-standard": "~4.1.0",
     "husky": "~5.2.0",
     "node-forge": "~0.10.0",
-    "sinon": "~9.2.0"
+    "sinon": "~11.0.0"
   },
   "engines": {
     "node": ">=12"
