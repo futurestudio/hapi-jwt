@@ -17,7 +17,7 @@
     "@hapi/catbox": "~11.1.0",
     "@hapi/catbox-redis": "~6.0.1",
     "@hapi/code": "~8.0.1",
-    "@hapi/hapi": "~20.1.0",
+    "@hapi/hapi": "~20.2.0",
     "@hapi/lab": "~24.3.0",
     "eslint": "~7.31.0",
     "eslint-config-standard": "~16.0.1",
